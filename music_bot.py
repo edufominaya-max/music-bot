@@ -93,12 +93,13 @@ def generate_cover(prompt: str, output_path: str) -> str:
         output_path
     )
 
-def generate_audio(prompt: str, output_path: str) -> str:
-    print("   Generando audio con MusicGen...")
-    return hf_request(
-        HF_AUDIO_API,
-        {"inputs": prompt, "parameters": {"duration": 30}},
-        output_path
+def generate_audio(prompt, output_path):
+    print("Generando audio con MusicGen...")
+    client = InferenceClient(token=HF_TOKEN)
+    audio = client.text_to_audio(prompt, model="facebook/musicgen-small")
+    with open(output_path, "wb") as f:
+        f.write(audio)
+    return output_path
     )
 
 def save_metadata(concept: dict, style: dict, folder: str) -> str:
