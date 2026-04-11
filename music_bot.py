@@ -2,9 +2,12 @@ import anthropic
 import requests
 import json
 import os
+import sys
 import time
 from datetime import datetime
 from pathlib import Path
+from PIL import Image
+import io
 
 ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 HF_TOKEN = os.environ["HF_API_TOKEN"]
@@ -50,7 +53,7 @@ def generate_song_concept(style):
         '  "album": "' + style["album_series"] + ' Vol. ' + str(datetime.now().month) + '",\n'
         '  "lyrics": ' + lyrics_field + ',\n'
         '  "suno_prompt": "detailed English prompt for Suno: genre, mood, instruments, BPM, era, max 200 chars",\n'
-        '  "cover_prompt": "prompt for album cover image: professional, no text, artistic style matching genre",\n'
+        '  "cover_prompt": "prompt for album cover image: abstract or landscape art, NO people faces, NO text, NO letters, NO words, artistic style matching genre, professional album cover",\n'
         '  "description": "Spotify description (2 sentences)",\n'
         '  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]\n'
         "}\n\n"
@@ -73,12 +76,17 @@ def generate_song_concept(style):
 def generate_cover(prompt, output_path):
     print("Generando caratula con FLUX.1...")
     headers = {"Authorization": "Bearer " + HF_TOKEN}
-    payload = {"inputs": prompt + ", album cover art, professional, square format, no text, no letters"}
+    full_prompt = prompt + ", album cover art, professional, square format, absolutely NO text, NO letters, NO words, NO signs, NO logos"
+    payload = {"inputs": full_prompt}
     for i in range(5):
         response = requests.post(HF_IMAGE_API, headers=headers, json=payload)
         if response.status_code == 200:
-            with open(output_path, "wb") as f:
-                f.write(response.content)
+            # Convertir a JPG y redimensionar a 3000x3000
+            img = Image.open(io.BytesIO(response.content))
+            img = img.convert("RGB")
+            img = img.resize((3000, 3000), Image.LANCZOS)
+            img.save(output_path, "JPEG", quality=95)
+            print("Caratula guardada en JPG 3000x3000")
             return output_path
         elif response.status_code == 503:
             print("Modelo cargando, esperando 20s...")
@@ -90,17 +98,14 @@ def generate_cover(prompt, output_path):
 def generate_audio_suno(concept, style, output_path):
     print("Generando audio con Suno via Apiframe...")
     is_instrumental = style["lang"] == "instrumental"
-
     headers = {
         "Content-Type": "application/json",
         "Authorization": APIFRAME_KEY
     }
-
     payload = {
         "prompt": concept["suno_prompt"],
         "make_instrumental": is_instrumental,
     }
-
     if not is_instrumental:
         payload["lyric"] = concept["lyrics"]
 
@@ -113,17 +118,12 @@ def generate_audio_suno(concept, style, output_path):
 
     for i in range(60):
         time.sleep(5)
-        fetch_response = requests.post(
-            SUNO_FETCH,
-            headers=headers,
-            json={"task_id": task_id}
-        )
+        fetch_response = requests.post(SUNO_FETCH, headers=headers, json={"task_id": task_id})
         if fetch_response.status_code != 200:
             continue
         data = fetch_response.json()
         status = data.get("status", "")
         print("Estado: " + status)
-
         if status == "finished":
             songs = data.get("songs", [])
             if not songs:
@@ -138,7 +138,6 @@ def generate_audio_suno(concept, style, output_path):
             return output_path
         elif status == "error":
             raise Exception("Suno error: " + str(data))
-
     raise Exception("Timeout esperando audio de Suno")
 
 def save_metadata(concept, style, folder):
@@ -159,50 +158,32 @@ def save_metadata(concept, style, folder):
         json.dump(metadata, f, ensure_ascii=False, indent=2)
     return path
 
-def run():
-    style = pick_style()
+def run_single(style):
     date_str = datetime.now().strftime("%Y%m%d")
     folder = "output/" + date_str + "_" + style["genre"].replace(" ", "_")
     Path(folder).mkdir(parents=True, exist_ok=True)
-
-    print("Generando cancion: " + style["genre"] + " | " + style["mood"])
-
-    print("Claude generando concepto...")
+    print("Generando cancion: " + style["genre"] + " | " + style["artist"])
     concept = generate_song_concept(style)
     print("Titulo: " + concept["title"] + " - " + style["artist"])
-
-    print("Generando caratula...")
-    generate_cover(concept["cover_prompt"], folder + "/cover.png")
-
-    print("Generando audio Suno...")
+    generate_cover(concept["cover_prompt"], folder + "/cover.jpg")
     generate_audio_suno(concept, style, folder + "/track.mp3")
-
     save_metadata(concept, style, folder)
-
     with open(folder + "/concept.json", "w", encoding="utf-8") as f:
         json.dump({"style": style, "concept": concept}, f, ensure_ascii=False, indent=2)
+    print("LISTO: " + style["artist"] + " - " + concept["title"])
 
-    print("LISTO - carpeta: " + folder)
-    print("Artista: " + style["artist"])
-    print("Audio: track.mp3")
-    print("Caratula: cover.png")
-    print("Metadata: distrokid_metadata.json")
+def run():
+    style = pick_style()
+    run_single(style)
 
 if __name__ == "__main__":
-    import sys
     if len(sys.argv) > 1 and sys.argv[1] == "all":
         for i, style in enumerate(STYLES):
             print("\n--- Generando " + str(i+1) + " de " + str(len(STYLES)) + " ---")
-            date_str = datetime.now().strftime("%Y%m%d")
-            folder = "output/" + date_str + "_" + style["genre"].replace(" ", "_")
-            Path(folder).mkdir(parents=True, exist_ok=True)
-            concept = generate_song_concept(style)
-            print("Titulo: " + concept["title"] + " - " + style["artist"])
-            generate_cover(concept["cover_prompt"], folder + "/cover.png")
-            generate_audio_suno(concept, style, folder + "/track.mp3")
-            save_metadata(concept, style, folder)
-            with open(folder + "/concept.json", "w", encoding="utf-8") as f:
-                json.dump({"style": style, "concept": concept}, f, ensure_ascii=False, indent=2)
-            print("LISTO: " + style["artist"] + " - " + concept["title"])
+            run_single(style)
+    elif len(sys.argv) > 1 and sys.argv[1].isdigit():
+        style = STYLES[int(sys.argv[1])]
+        print("Generando estilo especifico: " + style["genre"] + " - " + style["artist"])
+        run_single(style)
     else:
         run()
