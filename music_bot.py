@@ -3,16 +3,16 @@ import requests
 import json
 import os
 import time
-import scipy
-import numpy as np
 from datetime import datetime
 from pathlib import Path
-from transformers import pipeline
 
 ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 HF_TOKEN = os.environ["HF_API_TOKEN"]
+APIFRAME_KEY = os.environ["APIFRAME_KEY"]
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
+SUNO_GENERATE = "https://api.apiframe.ai/suno-create"
+SUNO_FETCH = "https://api.apiframe.ai/suno-fetch"
 
 STYLES = [
     {"genre": "Lo-fi jazz",       "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental"},
@@ -45,7 +45,7 @@ def generate_song_concept(style):
         '  "artist": "believable fictional artist name",\n'
         '  "album": "album or single name",\n'
         '  "lyrics": ' + lyrics_field + ',\n'
-        '  "suno_prompt": "detailed English prompt for MusicGen: genre, mood, instruments, BPM, era, references",\n'
+        '  "suno_prompt": "detailed English prompt for Suno: genre, mood, instruments, BPM, era, references, max 200 chars",\n'
         '  "cover_prompt": "prompt for album cover image: professional, no text, artistic style matching genre",\n'
         '  "description": "Spotify description (2 sentences)",\n'
         '  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]\n'
@@ -81,12 +81,58 @@ def generate_cover(prompt, output_path):
             raise Exception("HF Image Error " + str(response.status_code) + ": " + response.text)
     raise Exception("Max retries reached for image")
 
-def generate_audio(prompt, output_path):
-    print("Generando audio con MusicGen local...")
-    synthesiser = pipeline("text-to-audio", "facebook/musicgen-small", token=HF_TOKEN)
-    music = synthesiser(prompt, forward_params={"do_sample": True, "max_new_tokens": 256})
-    scipy.io.wavfile.write(output_path, rate=music["sampling_rate"], data=music["audio"])
-    return output_path
+def generate_audio_suno(concept, style, output_path):
+    print("Generando audio con Suno via Apiframe...")
+    is_instrumental = style["lang"] == "instrumental"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": APIFRAME_KEY
+    }
+
+    payload = {
+        "prompt": concept["suno_prompt"],
+        "make_instrumental": is_instrumental,
+        "title": concept["title"],
+    }
+
+    if not is_instrumental:
+        payload["lyric"] = concept["lyrics"]
+
+    response = requests.post(SUNO_GENERATE, headers=headers, json=payload)
+    if response.status_code != 200:
+        raise Exception("Suno generate error " + str(response.status_code) + ": " + response.text)
+
+    task_id = response.json().get("task_id")
+    print("Task ID: " + str(task_id) + " — esperando resultado...")
+
+    # Polling hasta que esté listo (max 5 minutos)
+    for i in range(60):
+        time.sleep(5)
+        fetch_response = requests.post(
+            SUNO_FETCH,
+            headers=headers,
+            json={"task_id": task_id}
+        )
+        if fetch_response.status_code != 200:
+            continue
+        data = fetch_response.json()
+        status = data.get("status", "")
+        print("Estado: " + status)
+
+        if status == "done":
+            audio_url = data.get("output", [{}])[0].get("audio_url", "")
+            if not audio_url:
+                raise Exception("No audio URL en respuesta")
+            audio_data = requests.get(audio_url).content
+            with open(output_path, "wb") as f:
+                f.write(audio_data)
+            print("Audio descargado correctamente")
+            return output_path
+        elif status == "error":
+            raise Exception("Suno error: " + str(data))
+
+    raise Exception("Timeout esperando audio de Suno")
 
 def save_metadata(concept, style, folder):
     metadata = {
@@ -121,8 +167,8 @@ def run():
     print("Generando caratula...")
     generate_cover(concept["cover_prompt"], folder + "/cover.png")
 
-    print("Generando audio...")
-    generate_audio(concept["suno_prompt"], folder + "/track.wav")
+    print("Generando audio Suno...")
+    generate_audio_suno(concept, style, folder + "/track.mp3")
 
     save_metadata(concept, style, folder)
 
@@ -130,7 +176,7 @@ def run():
         json.dump({"style": style, "concept": concept}, f, ensure_ascii=False, indent=2)
 
     print("LISTO - carpeta: " + folder)
-    print("Audio: track.wav")
+    print("Audio: track.mp3")
     print("Caratula: cover.png")
     print("Metadata: distrokid_metadata.json")
 
