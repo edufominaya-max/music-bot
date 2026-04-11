@@ -9,7 +9,7 @@ from pathlib import Path
 ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 HF_TOKEN = os.environ["HF_API_TOKEN"]
 
-HF_IMAGE_API = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell"
+HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
 HF_AUDIO_API = "https://api-inference.huggingface.co/models/facebook/musicgen-small"
 
 STYLES = [
