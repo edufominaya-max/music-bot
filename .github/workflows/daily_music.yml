@@ -1,5 +1,5 @@
 name: Daily Music Bot
-
+"""
 on:
   schedule:
     - cron: "0 8 * * *"
