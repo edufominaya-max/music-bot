@@ -18,7 +18,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install anthropic requests pillow
+        run: pip install -r requirements.txt
 
       - name: Run music bot
         env:
