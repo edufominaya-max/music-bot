@@ -1,4 +1,4 @@
 anthropic
-replicate
 requests
 pillow
+huggingface_hub
