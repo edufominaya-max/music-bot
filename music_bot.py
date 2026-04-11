@@ -189,4 +189,20 @@ def run():
     print("Metadata: distrokid_metadata.json")
 
 if __name__ == "__main__":
-    run()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "all":
+        for i, style in enumerate(STYLES):
+            print("\n--- Generando " + str(i+1) + " de " + str(len(STYLES)) + " ---")
+            date_str = datetime.now().strftime("%Y%m%d")
+            folder = "output/" + date_str + "_" + style["genre"].replace(" ", "_")
+            Path(folder).mkdir(parents=True, exist_ok=True)
+            concept = generate_song_concept(style)
+            print("Titulo: " + concept["title"] + " - " + style["artist"])
+            generate_cover(concept["cover_prompt"], folder + "/cover.png")
+            generate_audio_suno(concept, style, folder + "/track.mp3")
+            save_metadata(concept, style, folder)
+            with open(folder + "/concept.json", "w", encoding="utf-8") as f:
+                json.dump({"style": style, "concept": concept}, f, ensure_ascii=False, indent=2)
+            print("LISTO: " + style["artist"] + " - " + concept["title"])
+    else:
+        run()
