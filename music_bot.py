@@ -3,14 +3,16 @@ import requests
 import json
 import os
 import time
+import scipy
+import numpy as np
 from datetime import datetime
 from pathlib import Path
+from transformers import pipeline
 
 ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 HF_TOKEN = os.environ["HF_API_TOKEN"]
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
-HF_AUDIO_API = "https://api-inference.huggingface.co/models/facebook/musicgen-small"
 
 STYLES = [
     {"genre": "Lo-fi jazz",       "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental"},
@@ -80,21 +82,11 @@ def generate_cover(prompt, output_path):
     raise Exception("Max retries reached for image")
 
 def generate_audio(prompt, output_path):
-    print("Generando audio con MusicGen...")
-    headers = {"Authorization": "Bearer " + HF_TOKEN}
-    payload = {"inputs": prompt}
-    for i in range(5):
-        response = requests.post(HF_AUDIO_API, headers=headers, json=payload)
-        if response.status_code == 200:
-            with open(output_path, "wb") as f:
-                f.write(response.content)
-            return output_path
-        elif response.status_code == 503:
-            print("Modelo cargando, esperando 20s...")
-            time.sleep(20)
-        else:
-            raise Exception("HF Audio Error " + str(response.status_code) + ": " + response.text)
-    raise Exception("Max retries reached for audio")
+    print("Generando audio con MusicGen local...")
+    synthesiser = pipeline("text-to-audio", "facebook/musicgen-small", token=HF_TOKEN)
+    music = synthesiser(prompt, forward_params={"do_sample": True, "max_new_tokens": 256})
+    scipy.io.wavfile.write(output_path, rate=music["sampling_rate"], data=music["audio"])
+    return output_path
 
 def save_metadata(concept, style, folder):
     metadata = {
