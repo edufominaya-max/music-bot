@@ -13,6 +13,7 @@ APIFRAME_KEY = os.environ["APIFRAME_KEY"]
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
 SUNO_GENERATE = "https://api.apiframe.pro/suno-imagine"
 SUNO_FETCH = "https://api.apiframe.pro/fetch"
+
 STYLES = [
     {"genre": "Lo-fi jazz",       "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental"},
     {"genre": "Pop espanol 2024", "mood": "feel good verano",    "bpm": 118, "lang": "espanol"},
@@ -44,7 +45,7 @@ def generate_song_concept(style):
         '  "artist": "believable fictional artist name",\n'
         '  "album": "album or single name",\n'
         '  "lyrics": ' + lyrics_field + ',\n'
-        '  "suno_prompt": "detailed English prompt for Suno: genre, mood, instruments, BPM, era, references, max 200 chars",\n'
+        '  "suno_prompt": "detailed English prompt for Suno: genre, mood, instruments, BPM, era, max 200 chars",\n'
         '  "cover_prompt": "prompt for album cover image: professional, no text, artistic style matching genre",\n'
         '  "description": "Spotify description (2 sentences)",\n'
         '  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]\n'
@@ -92,7 +93,6 @@ def generate_audio_suno(concept, style, output_path):
     payload = {
         "prompt": concept["suno_prompt"],
         "make_instrumental": is_instrumental,
-        "title": concept["title"],
     }
 
     if not is_instrumental:
@@ -105,7 +105,6 @@ def generate_audio_suno(concept, style, output_path):
     task_id = response.json().get("task_id")
     print("Task ID: " + str(task_id) + " — esperando resultado...")
 
-    # Polling hasta que esté listo (max 5 minutos)
     for i in range(60):
         time.sleep(5)
         fetch_response = requests.post(
@@ -119,8 +118,11 @@ def generate_audio_suno(concept, style, output_path):
         status = data.get("status", "")
         print("Estado: " + status)
 
-        if status == "done":
-            audio_url = data.get("output", [{}])[0].get("audio_url", "")
+        if status == "finished":
+            songs = data.get("songs", [])
+            if not songs:
+                raise Exception("No songs en respuesta")
+            audio_url = songs[0].get("audio_url", "")
             if not audio_url:
                 raise Exception("No audio URL en respuesta")
             audio_data = requests.get(audio_url).content
