@@ -14,8 +14,8 @@ HF_TOKEN = os.environ["HF_API_TOKEN"]
 APIPASS_KEY = os.environ["APIPASS_KEY"]
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
-SUNO_GENERATE = "https://apipass.dev/api/task"
-SUNO_FETCH = "https://apipass.dev/api/task"
+SUNO_GENERATE = "https://api.apipass.dev/api/v1/jobs/createTask"
+SUNO_FETCH = "https://api.apipass.dev/api/v1/jobs/recordInfo"
 
 STYLES = [
     {"genre": "Lo-fi jazz",          "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental", "artist": "Mork",          "album_series": "Late Night Sessions"},
@@ -120,26 +120,25 @@ def generate_audio_suno(concept, style, output_path):
     if response.status_code != 200:
         raise Exception("Suno generate error " + str(response.status_code) + ": " + response.text)
 
-    task_id = response.json().get("taskId", "")
+    task_id = response.json().get("data", {}).get("taskId", "")
     print("Task ID: " + str(task_id) + " esperando resultado...")
 
     for i in range(60):
         time.sleep(5)
         fetch_response = requests.get(
-            SUNO_FETCH + "/" + task_id,
+            SUNO_FETCH + "?taskId=" + task_id,
             headers=headers
         )
         if fetch_response.status_code != 200:
             continue
         data = fetch_response.json()
-        status = data.get("status", "")
-        print("Estado: " + status)
-        if status in ["SUCCESS", "finished", "completed"]:
-            output = data.get("output", {})
-            clips = output.get("clips", [])
-            if not clips:
-                raise Exception("No clips en respuesta: " + str(data))
-            audio_url = list(clips.values())[0].get("audio_url", "")
+        state = data.get("data", {}).get("state", "")
+        print("Estado: " + state)
+        if state == "success":
+            songs = data.get("data", {}).get("resultJson", {}).get("data", [])
+            if not songs:
+                raise Exception("No songs en respuesta: " + str(data))
+            audio_url = songs[0].get("audio_url", "")
             if not audio_url:
                 raise Exception("No audio URL en respuesta")
             audio_data = requests.get(audio_url).content
@@ -147,7 +146,7 @@ def generate_audio_suno(concept, style, output_path):
                 f.write(audio_data)
             print("Audio descargado correctamente")
             return output_path
-        elif status in ["FAILED", "error"]:
+        elif state == "fail":
             raise Exception("Suno error: " + str(data))
     raise Exception("Timeout esperando audio de Suno")
 
