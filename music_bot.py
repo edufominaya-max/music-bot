@@ -11,11 +11,11 @@ import io
 
 ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 HF_TOKEN = os.environ["HF_API_TOKEN"]
-APIFRAME_KEY = os.environ["APIFRAME_KEY"]
+APIPASS_KEY = os.environ["APIPASS_KEY"]
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
-SUNO_GENERATE = "https://api.apiframe.pro/suno-imagine"
-SUNO_FETCH = "https://api.apiframe.pro/fetch"
+SUNO_GENERATE = "https://apipass.dev/api/suno/generate"
+SUNO_FETCH = "https://apipass.dev/api/suno/task"
 
 STYLES = [
     {"genre": "Lo-fi jazz",          "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental", "artist": "Mork",          "album_series": "Late Night Sessions"},
@@ -96,15 +96,19 @@ def generate_cover(prompt, output_path):
     raise Exception("Max retries reached for image")
 
 def generate_audio_suno(concept, style, output_path):
-    print("Generando audio con Suno via Apiframe...")
+    print("Generando audio con Suno V5 via APIPASS...")
     is_instrumental = style["lang"] == "instrumental"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": APIFRAME_KEY
+        "Authorization": "Bearer " + APIPASS_KEY
     }
     payload = {
         "prompt": concept["suno_prompt"],
-        "make_instrumental": is_instrumental,
+        "customMode": True,
+        "style": style["genre"],
+        "title": concept["title"],
+        "instrumental": is_instrumental,
+        "model": "V5"
     }
     if not is_instrumental:
         payload["lyric"] = concept["lyrics"]
@@ -113,21 +117,28 @@ def generate_audio_suno(concept, style, output_path):
     if response.status_code != 200:
         raise Exception("Suno generate error " + str(response.status_code) + ": " + response.text)
 
-    task_id = response.json().get("task_id")
+    task_id = response.json().get("data", {}).get("taskId", "")
+    if not task_id:
+        task_id = response.json().get("taskId", "")
     print("Task ID: " + str(task_id) + " esperando resultado...")
 
     for i in range(60):
         time.sleep(5)
-        fetch_response = requests.post(SUNO_FETCH, headers=headers, json={"task_id": task_id})
+        fetch_response = requests.get(
+            SUNO_FETCH + "/" + task_id,
+            headers=headers
+        )
         if fetch_response.status_code != 200:
             continue
         data = fetch_response.json()
-        status = data.get("status", "")
+        status = data.get("data", {}).get("status", data.get("status", ""))
         print("Estado: " + status)
-        if status == "finished":
-            songs = data.get("songs", [])
+        if status in ["finished", "completed", "SUCCESS"]:
+            songs = data.get("data", {}).get("clips", data.get("clips", []))
             if not songs:
-                raise Exception("No songs en respuesta")
+                songs = data.get("data", {}).get("songs", data.get("songs", []))
+            if not songs:
+                raise Exception("No songs en respuesta: " + str(data))
             audio_url = songs[0].get("audio_url", "")
             if not audio_url:
                 raise Exception("No audio URL en respuesta")
@@ -136,7 +147,7 @@ def generate_audio_suno(concept, style, output_path):
                 f.write(audio_data)
             print("Audio descargado correctamente")
             return output_path
-        elif status == "error":
+        elif status in ["error", "FAILED"]:
             raise Exception("Suno error: " + str(data))
     raise Exception("Timeout esperando audio de Suno")
 
