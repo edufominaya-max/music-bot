@@ -191,7 +191,11 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "all":
         for i, style in enumerate(STYLES):
             print("\n--- Generando " + str(i+1) + " de " + str(len(STYLES)) + " ---")
-            run_single(style)
+            try:
+                run_single(style)
+            except Exception as e:
+                print("ERROR en " + style["artist"] + ": " + str(e))
+                print("Continuando con el siguiente...")
     elif len(sys.argv) > 1 and sys.argv[1].isdigit():
         style = STYLES[int(sys.argv[1])]
         print("Generando estilo especifico: " + style["genre"] + " - " + style["artist"])
