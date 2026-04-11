@@ -15,18 +15,22 @@ SUNO_GENERATE = "https://api.apiframe.pro/suno-imagine"
 SUNO_FETCH = "https://api.apiframe.pro/fetch"
 
 STYLES = [
-    {"genre": "Lo-fi jazz",       "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental"},
-    {"genre": "Pop espanol 2024", "mood": "feel good verano",    "bpm": 118, "lang": "espanol"},
-    {"genre": "80s synth-pop",    "mood": "nostalgic neon",      "bpm": 120, "lang": "english"},
-    {"genre": "90s R&B soul",     "mood": "smooth romantic",     "bpm": 88,  "lang": "english"},
-    {"genre": "Clasica piano",    "mood": "focus concentration", "bpm": 60,  "lang": "instrumental"},
-    {"genre": "Reggaeton actual", "mood": "party energy",        "bpm": 95,  "lang": "espanol"},
-    {"genre": "70s funk",         "mood": "groove dance",        "bpm": 105, "lang": "english"},
-    {"genre": "Bossa nova",       "mood": "cafe afternoon",      "bpm": 130, "lang": "portugues"},
-    {"genre": "Indie pop 2020s",  "mood": "melancholic hopeful", "bpm": 100, "lang": "english"},
-    {"genre": "Flamenco pop",     "mood": "pasion espanola",     "bpm": 85,  "lang": "espanol"},
-    {"genre": "Ambient chill",    "mood": "sleep meditation",    "bpm": 55,  "lang": "instrumental"},
-    {"genre": "Hip-hop boom bap", "mood": "raw authentic",       "bpm": 90,  "lang": "english"},
+    {"genre": "Lo-fi jazz",          "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental", "artist": "Mork",          "album_series": "Late Night Sessions"},
+    {"genre": "Pop espanol femenino","mood": "feel good verano",    "bpm": 118, "lang": "espanol",       "artist": "Loxe",          "album_series": "Verano Eterno"},
+    {"genre": "80s synth-pop",       "mood": "nostalgic neon",      "bpm": 120, "lang": "english",       "artist": "Noctua",        "album_series": "Electric Dreams"},
+    {"genre": "90s R&B soul",        "mood": "smooth romantic",     "bpm": 88,  "lang": "english",       "artist": "Sable and Co",  "album_series": "Velvet Nights"},
+    {"genre": "Clasica piano",       "mood": "focus concentration", "bpm": 60,  "lang": "instrumental",  "artist": "Eira",          "album_series": "Focus Series"},
+    {"genre": "Reggaeton actual",    "mood": "party energy",        "bpm": 95,  "lang": "espanol",       "artist": "Vael",          "album_series": "Ritmo Urbano"},
+    {"genre": "70s funk",            "mood": "groove dance",        "bpm": 105, "lang": "english",       "artist": "The Coppers",   "album_series": "Funk Forever"},
+    {"genre": "Bossa nova",          "mood": "cafe afternoon",      "bpm": 130, "lang": "portugues",     "artist": "Nevoa",         "album_series": "Cafe do Sol"},
+    {"genre": "Indie pop 2020s",     "mood": "melancholic hopeful", "bpm": 100, "lang": "english",       "artist": "Pale June",     "album_series": "Silver Lining"},
+    {"genre": "Flamenco pop",        "mood": "pasion espanola",     "bpm": 85,  "lang": "espanol",       "artist": "Lena",          "album_series": "Alma Flamenca"},
+    {"genre": "Ambient chill",       "mood": "sleep meditation",    "bpm": 55,  "lang": "instrumental",  "artist": "Mork",          "album_series": "Weightless"},
+    {"genre": "Hip-hop boom bap",    "mood": "raw authentic",       "bpm": 90,  "lang": "english",       "artist": "Fenn",          "album_series": "Street Scriptures"},
+    {"genre": "Pop espanol boyband", "mood": "feel good pop",       "bpm": 110, "lang": "espanol",       "artist": "Latitud",       "album_series": "Horizonte"},
+    {"genre": "Cuentos infantiles",  "mood": "fun magical",         "bpm": 90,  "lang": "espanol",       "artist": "Copo y Pip",    "album_series": "Cuentos de Colores"},
+    {"genre": "Podcast espanol",     "mood": "calm storytelling",   "bpm": 70,  "lang": "espanol",       "artist": "El Mirador",    "album_series": "Conversaciones"},
+    {"genre": "Podcast ingles",      "mood": "calm storytelling",   "bpm": 70,  "lang": "english",       "artist": "The Porch",     "album_series": "Stories"},
 ]
 
 def pick_style():
@@ -42,8 +46,8 @@ def generate_song_concept(style):
         "Return ONLY a valid JSON object with this exact structure:\n"
         "{\n"
         '  "title": "song title",\n'
-        '  "artist": "believable fictional artist name",\n'
-        '  "album": "album or single name",\n'
+        '  "artist": "' + style["artist"] + '",\n'
+        '  "album": "' + style["album_series"] + ' Vol. ' + str(datetime.now().month) + '",\n'
         '  "lyrics": ' + lyrics_field + ',\n'
         '  "suno_prompt": "detailed English prompt for Suno: genre, mood, instruments, BPM, era, max 200 chars",\n'
         '  "cover_prompt": "prompt for album cover image: professional, no text, artistic style matching genre",\n'
@@ -53,7 +57,9 @@ def generate_song_concept(style):
         "Style: " + style["genre"] + "\n"
         "Mood: " + style["mood"] + "\n"
         "BPM: " + str(style["bpm"]) + "\n"
-        "Language: " + style["lang"]
+        "Language: " + style["lang"] + "\n"
+        "Artist name (use exactly this): " + style["artist"] + "\n"
+        "Album series: " + style["album_series"]
     )
     msg = client.messages.create(
         model="claude-sonnet-4-20250514",
@@ -103,7 +109,7 @@ def generate_audio_suno(concept, style, output_path):
         raise Exception("Suno generate error " + str(response.status_code) + ": " + response.text)
 
     task_id = response.json().get("task_id")
-    print("Task ID: " + str(task_id) + " — esperando resultado...")
+    print("Task ID: " + str(task_id) + " esperando resultado...")
 
     for i in range(60):
         time.sleep(5)
@@ -138,7 +144,7 @@ def generate_audio_suno(concept, style, output_path):
 def save_metadata(concept, style, folder):
     metadata = {
         "Title": concept["title"],
-        "Artist": concept["artist"],
+        "Artist": style["artist"],
         "Album": concept["album"],
         "Genre": style["genre"],
         "Release Date": datetime.now().strftime("%Y-%m-%d"),
@@ -163,7 +169,7 @@ def run():
 
     print("Claude generando concepto...")
     concept = generate_song_concept(style)
-    print("Titulo: " + concept["title"] + " - " + concept["artist"])
+    print("Titulo: " + concept["title"] + " - " + style["artist"])
 
     print("Generando caratula...")
     generate_cover(concept["cover_prompt"], folder + "/cover.png")
@@ -177,6 +183,7 @@ def run():
         json.dump({"style": style, "concept": concept}, f, ensure_ascii=False, indent=2)
 
     print("LISTO - carpeta: " + folder)
+    print("Artista: " + style["artist"])
     print("Audio: track.mp3")
     print("Caratula: cover.png")
     print("Metadata: distrokid_metadata.json")
