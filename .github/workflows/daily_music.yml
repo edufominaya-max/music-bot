@@ -24,6 +24,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
+          APIFRAME_KEY: ${{ secrets.APIFRAME_KEY }}
         run: python music_bot.py
 
       - name: Upload output
