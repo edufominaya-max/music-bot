@@ -5,12 +5,12 @@ import os
 import time
 from datetime import datetime
 from pathlib import Path
-from huggingface_hub import InferenceClient
 
 ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 HF_TOKEN = os.environ["HF_API_TOKEN"]
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
+HF_AUDIO_API = "https://router.huggingface.co/hf-inference/models/facebook/musicgen-small"
 
 STYLES = [
     {"genre": "Lo-fi jazz",       "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental"},
@@ -73,20 +73,28 @@ def generate_cover(prompt, output_path):
                 f.write(response.content)
             return output_path
         elif response.status_code == 503:
-            wait = 20
-            print("Modelo cargando, esperando " + str(wait) + "s...")
-            time.sleep(wait)
+            print("Modelo cargando, esperando 20s...")
+            time.sleep(20)
         else:
             raise Exception("HF Image Error " + str(response.status_code) + ": " + response.text)
     raise Exception("Max retries reached for image")
 
 def generate_audio(prompt, output_path):
     print("Generando audio con MusicGen...")
-    client = InferenceClient(token=HF_TOKEN)
-    audio = client.text_to_audio(prompt, model="facebook/musicgen-small")
-    with open(output_path, "wb") as f:
-        f.write(audio)
-    return output_path
+    headers = {"Authorization": "Bearer " + HF_TOKEN}
+    payload = {"inputs": prompt}
+    for i in range(5):
+        response = requests.post(HF_AUDIO_API, headers=headers, json=payload)
+        if response.status_code == 200:
+            with open(output_path, "wb") as f:
+                f.write(response.content)
+            return output_path
+        elif response.status_code == 503:
+            print("Modelo cargando, esperando 20s...")
+            time.sleep(20)
+        else:
+            raise Exception("HF Audio Error " + str(response.status_code) + ": " + response.text)
+    raise Exception("Max retries reached for audio")
 
 def save_metadata(concept, style, folder):
     metadata = {
