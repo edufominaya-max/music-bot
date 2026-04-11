@@ -11,9 +11,8 @@ HF_TOKEN = os.environ["HF_API_TOKEN"]
 APIFRAME_KEY = os.environ["APIFRAME_KEY"]
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
-SUNO_GENERATE = "https://api.apiframe.ai/suno-create"
-SUNO_FETCH = "https://api.apiframe.ai/suno-fetch"
-
+SUNO_GENERATE = "https://api.apiframe.pro/suno-imagine"
+SUNO_FETCH = "https://api.apiframe.pro/fetch"
 STYLES = [
     {"genre": "Lo-fi jazz",       "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental"},
     {"genre": "Pop espanol 2024", "mood": "feel good verano",    "bpm": 118, "lang": "espanol"},
