@@ -1,5 +1,5 @@
 name: Daily Music Bot
-"""
+
 on:
   schedule:
     - cron: "0 8 * * *"
@@ -18,7 +18,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install anthropic replicate requests pillow
+        run: pip install anthropic requests pillow
 
       - name: Run music bot
         env:
