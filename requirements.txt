@@ -1,0 +1,4 @@
+anthropic
+replicate
+requests
+pillow
