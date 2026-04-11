@@ -14,8 +14,8 @@ HF_TOKEN = os.environ["HF_API_TOKEN"]
 APIPASS_KEY = os.environ["APIPASS_KEY"]
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
-SUNO_GENERATE = "https://apipass.dev/api/suno/generate"
-SUNO_FETCH = "https://apipass.dev/api/suno/task"
+SUNO_GENERATE = "https://apipass.dev/api/task"
+SUNO_FETCH = "https://apipass.dev/api/task"
 
 STYLES = [
     {"genre": "Lo-fi jazz",          "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental", "artist": "Mork",          "album_series": "Late Night Sessions"},
@@ -103,23 +103,24 @@ def generate_audio_suno(concept, style, output_path):
         "Authorization": "Bearer " + APIPASS_KEY
     }
     payload = {
-        "prompt": concept["suno_prompt"],
-        "customMode": True,
-        "style": style["genre"],
-        "title": concept["title"],
-        "instrumental": is_instrumental,
-        "model": "V5"
+        "model": "suno/generate",
+        "input": {
+            "model_version": "V5",
+            "customMode": True,
+            "style": style["genre"],
+            "title": concept["title"],
+            "instrumental": is_instrumental,
+            "prompt": concept["suno_prompt"],
+        }
     }
     if not is_instrumental:
-        payload["lyric"] = concept["lyrics"]
+        payload["input"]["prompt"] = concept["lyrics"]
 
     response = requests.post(SUNO_GENERATE, headers=headers, json=payload)
     if response.status_code != 200:
         raise Exception("Suno generate error " + str(response.status_code) + ": " + response.text)
 
-    task_id = response.json().get("data", {}).get("taskId", "")
-    if not task_id:
-        task_id = response.json().get("taskId", "")
+    task_id = response.json().get("taskId", "")
     print("Task ID: " + str(task_id) + " esperando resultado...")
 
     for i in range(60):
@@ -131,15 +132,14 @@ def generate_audio_suno(concept, style, output_path):
         if fetch_response.status_code != 200:
             continue
         data = fetch_response.json()
-        status = data.get("data", {}).get("status", data.get("status", ""))
+        status = data.get("status", "")
         print("Estado: " + status)
-        if status in ["finished", "completed", "SUCCESS"]:
-            songs = data.get("data", {}).get("clips", data.get("clips", []))
-            if not songs:
-                songs = data.get("data", {}).get("songs", data.get("songs", []))
-            if not songs:
-                raise Exception("No songs en respuesta: " + str(data))
-            audio_url = songs[0].get("audio_url", "")
+        if status in ["SUCCESS", "finished", "completed"]:
+            output = data.get("output", {})
+            clips = output.get("clips", [])
+            if not clips:
+                raise Exception("No clips en respuesta: " + str(data))
+            audio_url = list(clips.values())[0].get("audio_url", "")
             if not audio_url:
                 raise Exception("No audio URL en respuesta")
             audio_data = requests.get(audio_url).content
@@ -147,7 +147,7 @@ def generate_audio_suno(concept, style, output_path):
                 f.write(audio_data)
             print("Audio descargado correctamente")
             return output_path
-        elif status in ["error", "FAILED"]:
+        elif status in ["FAILED", "error"]:
             raise Exception("Suno error: " + str(data))
     raise Exception("Timeout esperando audio de Suno")
 
