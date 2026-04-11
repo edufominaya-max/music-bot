@@ -17,7 +17,7 @@ ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 HF_TOKEN = os.environ["HF_API_TOKEN"]
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
-
+HF_AUDIO_API = "https://router.huggingface.co/hf-inference/models/facebook/musicgen-small"
 STYLES = [
     {"genre": "Lo-fi jazz",        "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental"},
     {"genre": "Pop español 2024",  "mood": "feel good verano",    "bpm": 118, "lang": "español"},
