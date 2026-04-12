@@ -100,7 +100,8 @@ def generate_audio_suno(concept, style, output_path):
     is_instrumental = style["lang"] == "instrumental"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + APIPASS_KEY
+        "Authorization": "Bearer " + APIPASS_KEY,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
     }
     payload = {
         "model": "suno/generate",
@@ -116,7 +117,7 @@ def generate_audio_suno(concept, style, output_path):
     if not is_instrumental:
         payload["input"]["prompt"] = concept["lyrics"]
 
-    response = requests.post(SUNO_GENERATE, headers=headers, json=payload)
+    response = requests.post(SUNO_GENERATE, headers=headers, json=payload, timeout=30)
     if response.status_code != 200:
         raise Exception("Suno generate error " + str(response.status_code) + ": " + response.text)
 
@@ -127,21 +128,22 @@ def generate_audio_suno(concept, style, output_path):
         time.sleep(5)
         fetch_response = requests.get(
             SUNO_FETCH + "?taskId=" + task_id,
-            headers=headers
+            headers=headers,
+            timeout=30
         )
         if fetch_response.status_code != 200:
             continue
         data = fetch_response.json()
         state = data.get("data", {}).get("state", "")
         print("Estado: " + state)
+
         if state == "success":
-            songs = data.get("data", {}).get("resultJson", {}).get("data", [])
-            if not songs:
-                raise Exception("No songs en respuesta: " + str(data))
-            audio_url = songs[0].get("audio_url", "")
-            if not audio_url:
-                raise Exception("No audio URL en respuesta")
-            audio_data = requests.get(audio_url).content
+            result_urls = data.get("data", {}).get("resultJson", {}).get("resultUrls", [])
+            if not result_urls:
+                result_urls = data.get("resultUrls", [])
+            if not result_urls:
+                raise Exception("No audio URLs en respuesta: " + str(data))
+            audio_data = requests.get(result_urls[0], timeout=60).content
             with open(output_path, "wb") as f:
                 f.write(audio_data)
             print("Audio descargado correctamente")
