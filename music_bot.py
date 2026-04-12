@@ -113,10 +113,12 @@ def generate_audio_suno(concept, style, output_path):
             "title": concept["title"],
             "instrumental": is_instrumental,
             "prompt": concept["suno_prompt"],
+            "weirdnessConstraint": 0.3,
+            "styleWeight": 0.7,
         }
     }
     if not is_instrumental:
-        payload["input"]["prompt"] = concept["lyrics"]
+        payload["input"]["prompt"] = concept["lyrics"] + "\n\n[outro]\n" + concept["lyrics"][:200]
 
     response = requests.post(SUNO_GENERATE, headers=headers, json=payload, timeout=30)
     if response.status_code != 200:
@@ -139,15 +141,27 @@ def generate_audio_suno(concept, style, output_path):
         print("Estado: " + state)
 
         if state == "success":
-            result_urls = data.get("data", {}).get("resultJson", {}).get("resultUrls", [])
-            if not result_urls:
-                result_urls = data.get("resultUrls", [])
-            if not result_urls:
-                raise Exception("No audio URLs en respuesta: " + str(data))
-            audio_data = requests.get(result_urls[0], timeout=60).content
+            result_json = data.get("data", {}).get("resultJson", {})
+            # Intentar diferentes estructuras de respuesta
+            audio_url = ""
+            # Estructura 1: resultUrls array
+            result_urls = result_json.get("resultUrls", [])
+            if result_urls:
+                audio_url = result_urls[0]
+            # Estructura 2: data array con audio_url
+            if not audio_url:
+                songs = result_json.get("data", [])
+                if songs:
+                    audio_url = songs[0].get("audio_url", "")
+            # Estructura 3: audio_url directo
+            if not audio_url:
+                audio_url = result_json.get("audio_url", "")
+            if not audio_url:
+                raise Exception("No audio URL en respuesta: " + str(data))
+            audio_data = requests.get(audio_url, timeout=60).content
             with open(output_path, "wb") as f:
                 f.write(audio_data)
-            print("Audio descargado correctamente")
+            print("Audio descargado: " + audio_url)
             return output_path
         elif state == "fail":
             raise Exception("Suno error: " + str(data))
