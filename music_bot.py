@@ -53,7 +53,7 @@ def generate_song_concept(style):
         '  "album": "' + style["album_series"] + ' Vol. ' + str(datetime.now().month) + '",\n'
         '  "lyrics": ' + lyrics_field + ',\n'
         '  "suno_prompt": "detailed English prompt for Suno: genre, mood, instruments, BPM, era, max 200 chars",\n'
-        '  "cover_prompt": "prompt for album cover image: abstract or landscape art, NO people faces, NO text, NO letters, NO words, artistic style matching genre, professional album cover",\n'
+        '          "cover_prompt": "prompt for album cover image: abstract or landscape art, NO people faces, NO text, NO letters, NO words, artistic style matching genre, professional album cover",\n'
         '  "description": "Spotify description (2 sentences)",\n'
         '  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]\n'
         "}\n\n"
@@ -62,7 +62,8 @@ def generate_song_concept(style):
         "BPM: " + str(style["bpm"]) + "\n"
         "Language: " + style["lang"] + "\n"
         "Artist name (use exactly this): " + style["artist"] + "\n"
-        "Album series: " + style["album_series"]
+        "Album series: " + style["album_series"] + "\n"
+        "Song duration target: 3-4 minutes. Write enough lyrics (3 verses, 2 choruses, bridge) to fill that time."
     )
     msg = client.messages.create(
         model="claude-sonnet-4-20250514",
