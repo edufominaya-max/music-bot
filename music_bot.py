@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import time
+import random
 from datetime import datetime
 from pathlib import Path
 from PIL import Image
@@ -18,22 +19,32 @@ SUNO_GENERATE = "https://api.apipass.dev/api/v1/jobs/createTask"
 SUNO_FETCH = "https://api.apipass.dev/api/v1/jobs/recordInfo"
 
 STYLES = [
-    {"genre": "Lo-fi jazz",          "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental", "artist": "Mork",          "album_series": "Late Night Sessions"},
-    {"genre": "Pop espanol femenino","mood": "feel good verano",    "bpm": 118, "lang": "espanol",       "artist": "Loxe",          "album_series": "Verano Eterno"},
-    {"genre": "80s synth-pop",       "mood": "nostalgic neon",      "bpm": 120, "lang": "english",       "artist": "Noctua",        "album_series": "Electric Dreams"},
-    {"genre": "90s R&B soul",        "mood": "smooth romantic",     "bpm": 88,  "lang": "english",       "artist": "Sable and Co",  "album_series": "Velvet Nights"},
-    {"genre": "Clasica piano",       "mood": "focus concentration", "bpm": 60,  "lang": "instrumental",  "artist": "Eira",          "album_series": "Focus Series"},
-    {"genre": "Reggaeton actual",    "mood": "party energy",        "bpm": 95,  "lang": "espanol",       "artist": "Vael",          "album_series": "Ritmo Urbano"},
-    {"genre": "70s funk",            "mood": "groove dance",        "bpm": 105, "lang": "english",       "artist": "The Coppers",   "album_series": "Funk Forever"},
-    {"genre": "Bossa nova",          "mood": "cafe afternoon",      "bpm": 130, "lang": "portugues",     "artist": "Nevoa",         "album_series": "Cafe do Sol"},
-    {"genre": "Indie pop 2020s",     "mood": "melancholic hopeful", "bpm": 100, "lang": "english",       "artist": "Pale June",     "album_series": "Silver Lining"},
-    {"genre": "Flamenco pop",        "mood": "pasion espanola",     "bpm": 85,  "lang": "espanol",       "artist": "Lena",          "album_series": "Alma Flamenca"},
-    {"genre": "Ambient chill",       "mood": "sleep meditation",    "bpm": 55,  "lang": "instrumental",  "artist": "Mork",          "album_series": "Weightless"},
-    {"genre": "Hip-hop boom bap",    "mood": "raw authentic",       "bpm": 90,  "lang": "english",       "artist": "Fenn",          "album_series": "Street Scriptures"},
-    {"genre": "Pop espanol boyband", "mood": "feel good pop",       "bpm": 110, "lang": "espanol",       "artist": "Latitud",       "album_series": "Horizonte"},
-    {"genre": "Cuentos infantiles",  "mood": "fun magical",         "bpm": 90,  "lang": "espanol",       "artist": "Copo y Pip",    "album_series": "Cuentos de Colores"},
-    {"genre": "Podcast espanol",     "mood": "calm storytelling",   "bpm": 70,  "lang": "espanol",       "artist": "El Mirador",    "album_series": "Conversaciones"},
-    {"genre": "Podcast ingles",      "mood": "calm storytelling",   "bpm": 70,  "lang": "english",       "artist": "The Porch",     "album_series": "Stories"},
+    {"genre": "Lo-fi jazz",          "mood": "relaxing study",      "bpm": 75,  "lang": "instrumental", "artist": "Mork",          "album_series": "Late Night Sessions",   "type": "instrumental"},
+    {"genre": "Pop espanol femenino","mood": "feel good verano",    "bpm": 118, "lang": "espanol",       "artist": "Loxe",          "album_series": "Verano Eterno",         "type": "pop"},
+    {"genre": "80s synth-pop",       "mood": "nostalgic neon",      "bpm": 120, "lang": "english",       "artist": "Noctua",        "album_series": "Electric Dreams",       "type": "pop"},
+    {"genre": "90s R&B soul",        "mood": "smooth romantic",     "bpm": 88,  "lang": "english",       "artist": "Sable and Co",  "album_series": "Velvet Nights",         "type": "pop"},
+    {"genre": "Clasica piano",       "mood": "focus concentration", "bpm": 60,  "lang": "instrumental",  "artist": "Eira",          "album_series": "Focus Series",          "type": "instrumental"},
+    {"genre": "Reggaeton actual",    "mood": "party energy",        "bpm": 95,  "lang": "espanol",       "artist": "Vael",          "album_series": "Ritmo Urbano",          "type": "pop"},
+    {"genre": "70s funk",            "mood": "groove dance",        "bpm": 105, "lang": "english",       "artist": "The Coppers",   "album_series": "Funk Forever",          "type": "pop"},
+    {"genre": "Bossa nova",          "mood": "cafe afternoon",      "bpm": 130, "lang": "portugues",     "artist": "Nevoa",         "album_series": "Cafe do Sol",           "type": "pop"},
+    {"genre": "Indie pop 2020s",     "mood": "melancholic hopeful", "bpm": 100, "lang": "english",       "artist": "Pale June",     "album_series": "Silver Lining",         "type": "pop"},
+    {"genre": "Flamenco pop",        "mood": "pasion espanola",     "bpm": 85,  "lang": "espanol",       "artist": "Lena",          "album_series": "Alma Flamenca",         "type": "pop"},
+    {"genre": "Ambient chill",       "mood": "sleep meditation",    "bpm": 55,  "lang": "instrumental",  "artist": "Mork",          "album_series": "Weightless",            "type": "instrumental"},
+    {"genre": "Hip-hop boom bap",    "mood": "raw authentic",       "bpm": 90,  "lang": "english",       "artist": "Fenn",          "album_series": "Street Scriptures",     "type": "pop"},
+    {"genre": "Pop espanol boyband", "mood": "feel good pop",       "bpm": 110, "lang": "espanol",       "artist": "Latitud",       "album_series": "Horizonte",             "type": "pop"},
+    {"genre": "Cuentos infantiles",  "mood": "fun magical",         "bpm": 90,  "lang": "espanol",       "artist": "Copo y Pip",    "album_series": "Cuentos de Colores",    "type": "pop"},
+    {"genre": "Cantautor espanol",   "mood": "poetic introspective","bpm": 75,  "lang": "espanol",       "artist": "Tomas Via",     "album_series": "Cuadernos de Viaje",    "type": "cantautor"},
+    {"genre": "Jazz instrumental",   "mood": "late night cool",     "bpm": 95,  "lang": "instrumental",  "artist": "Mork",          "album_series": "Blue Hours",            "type": "instrumental"},
+]
+
+THEMES = [
+    "a childhood memory", "migration and nostalgia", "a letter never sent",
+    "the smell of rain on dry earth", "a city seen from a train",
+    "growing old together", "the first apartment", "a dead language",
+    "morning coffee rituals", "a lighthouse keeper", "the weight of silence",
+    "a grandmother's hands", "learning to swim", "street markets",
+    "the color of autumn", "a broken clock", "midnight conversations",
+    "a garden in winter", "the sound of a foreign language", "leaving home"
 ]
 
 def pick_style():
@@ -43,31 +54,48 @@ def pick_style():
 def generate_song_concept(style):
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
     is_instrumental = style["lang"] == "instrumental"
-    lyrics_field = "'[INSTRUMENTAL]'" if is_instrumental else "'full lyrics with verses, chorus and bridge'"
+    song_type = style.get("type", "pop")
+    theme = random.choice(THEMES)
+    target_duration = random.randint(180, 240)
+
+    if is_instrumental:
+        lyrics_instruction = "'[INSTRUMENTAL]'"
+        lyrics_detail = "No lyrics needed - instrumental only."
+    elif song_type == "cantautor":
+        lyrics_instruction = "'full lyrics in the style of Jorge Drexler or Leonard Cohen: poetic, metaphorical, complex imagery, unexpected rhymes, narrative storytelling, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
+        lyrics_detail = "Write deep, poetic lyrics. Use metaphors, imagery, narrative. Avoid cliches. Theme: " + theme
+    else:
+        lyrics_instruction = "'full lyrics: catchy but meaningful, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
+        lyrics_detail = "Write engaging lyrics with a clear story or emotion. Theme: " + theme
+
     prompt = (
-        "You are a professional music producer. Generate a complete song in style: " + style["genre"] + ".\n\n"
-        "Return ONLY a valid JSON object with this exact structure:\n"
+        "You are a professional music producer. Generate a complete song.\n\n"
+        "Return ONLY a valid JSON object:\n"
         "{\n"
-        '  "title": "song title",\n'
+        '  "title": "song title related to the theme",\n'
         '  "artist": "' + style["artist"] + '",\n'
         '  "album": "' + style["album_series"] + ' Vol. ' + str(datetime.now().month) + '",\n'
-        '  "lyrics": ' + lyrics_field + ',\n'
-        '  "suno_prompt": "detailed English prompt for Suno: genre, mood, instruments, BPM, era, max 200 chars",\n'
-        '          "cover_prompt": "prompt for album cover image: abstract or landscape art, NO people faces, NO text, NO letters, NO words, artistic style matching genre, professional album cover",\n'
-        '  "description": "Spotify description (2 sentences)",\n'
+        '  "lyrics": ' + lyrics_instruction + ',\n'
+        '  "suno_prompt": "detailed English prompt: genre, mood, specific instruments, BPM, vocal style, era, max 200 chars",\n'
+        '  "cover_prompt": "abstract or landscape album art, NO faces, NO text, NO letters, artistic, matches genre mood",\n'
+        '  "description": "2 sentence Spotify description",\n'
         '  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]\n'
         "}\n\n"
-        "Style: " + style["genre"] + "\n"
+        "Genre: " + style["genre"] + "\n"
         "Mood: " + style["mood"] + "\n"
         "BPM: " + str(style["bpm"]) + "\n"
         "Language: " + style["lang"] + "\n"
-        "Artist name (use exactly this): " + style["artist"] + "\n"
-        "Album series: " + style["album_series"] + "\n"
-        "Song duration target: 3-4 minutes. Write enough lyrics (3 verses, 2 choruses, bridge) to fill that time."
+        "Artist: " + style["artist"] + "\n"
+        "Theme: " + theme + "\n"
+        "Target duration: " + str(target_duration) + " seconds\n"
+        + lyrics_detail + "\n"
+        "IMPORTANT: Be completely original. Avoid fire, night, dance floor cliches. "
+        "Every song must be unique. Seed: " + str(random.randint(1, 999999))
     )
+
     msg = client.messages.create(
         model="claude-sonnet-4-20250514",
-        max_tokens=1500,
+        max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
     raw = msg.content[0].text.strip()
@@ -76,28 +104,27 @@ def generate_song_concept(style):
 
 def generate_cover(prompt, output_path):
     print("Generando caratula con FLUX.1...")
-    headers = {"Authorization": "Bearer " + HF_TOKEN}
-    full_prompt = prompt + ", album cover art, professional, square format, absolutely NO text, NO letters, NO words, NO signs, NO logos"
-    payload = {"inputs": full_prompt}
+    headers = {"Authorization": "Bearer " + HF_TOKEN,
+               "User-Agent": "Mozilla/5.0"}
+    payload = {"inputs": prompt + ", album cover art, professional, square, NO text, NO letters, NO faces"}
     for i in range(5):
         response = requests.post(HF_IMAGE_API, headers=headers, json=payload)
         if response.status_code == 200:
-            # Convertir a JPG y redimensionar a 3000x3000
             img = Image.open(io.BytesIO(response.content))
             img = img.convert("RGB")
             img = img.resize((3000, 3000), Image.LANCZOS)
             img.save(output_path, "JPEG", quality=95)
-            print("Caratula guardada en JPG 3000x3000")
+            print("Caratula guardada JPG 3000x3000")
             return output_path
         elif response.status_code == 503:
-            print("Modelo cargando, esperando 20s...")
+            print("Esperando modelo... 20s")
             time.sleep(20)
         else:
-            raise Exception("HF Image Error " + str(response.status_code) + ": " + response.text)
-    raise Exception("Max retries reached for image")
+            raise Exception("HF Error " + str(response.status_code))
+    raise Exception("Max retries cover")
 
 def generate_audio_suno(concept, style, output_path):
-    print("Generando audio con Suno V5 via APIPASS...")
+    print("Generando audio Suno V5...")
     is_instrumental = style["lang"] == "instrumental"
     headers = {
         "Content-Type": "application/json",
@@ -118,54 +145,45 @@ def generate_audio_suno(concept, style, output_path):
         }
     }
     if not is_instrumental:
-        payload["input"]["prompt"] = concept["lyrics"] + "\n\n[outro]\n" + concept["lyrics"][:200]
+        payload["input"]["prompt"] = concept["lyrics"]
 
     response = requests.post(SUNO_GENERATE, headers=headers, json=payload, timeout=30)
     if response.status_code != 200:
-        raise Exception("Suno generate error " + str(response.status_code) + ": " + response.text)
+        raise Exception("Suno error " + str(response.status_code) + ": " + response.text)
 
     task_id = response.json().get("data", {}).get("taskId", "")
-    print("Task ID: " + str(task_id) + " esperando resultado...")
+    print("Task ID: " + task_id)
 
     for i in range(60):
         time.sleep(5)
-        fetch_response = requests.get(
-            SUNO_FETCH + "?taskId=" + task_id,
-            headers=headers,
-            timeout=30
-        )
-        if fetch_response.status_code != 200:
+        fetch = requests.get(SUNO_FETCH + "?taskId=" + task_id, headers=headers, timeout=30)
+        if fetch.status_code != 200:
             continue
-        data = fetch_response.json()
+        data = fetch.json()
         state = data.get("data", {}).get("state", "")
         print("Estado: " + state)
-
         if state == "success":
             result_json = data.get("data", {}).get("resultJson", {})
-            # Intentar diferentes estructuras de respuesta
             audio_url = ""
-            # Estructura 1: resultUrls array
             result_urls = result_json.get("resultUrls", [])
             if result_urls:
                 audio_url = result_urls[0]
-            # Estructura 2: data array con audio_url
             if not audio_url:
                 songs = result_json.get("data", [])
                 if songs:
                     audio_url = songs[0].get("audio_url", "")
-            # Estructura 3: audio_url directo
             if not audio_url:
                 audio_url = result_json.get("audio_url", "")
             if not audio_url:
-                raise Exception("No audio URL en respuesta: " + str(data))
+                raise Exception("No audio URL: " + str(data))
             audio_data = requests.get(audio_url, timeout=60).content
             with open(output_path, "wb") as f:
                 f.write(audio_data)
             print("Audio descargado: " + audio_url)
             return output_path
         elif state == "fail":
-            raise Exception("Suno error: " + str(data))
-    raise Exception("Timeout esperando audio de Suno")
+            raise Exception("Suno fail: " + str(data))
+    raise Exception("Timeout Suno")
 
 def save_metadata(concept, style, folder):
     metadata = {
@@ -183,15 +201,14 @@ def save_metadata(concept, style, folder):
     path = folder + "/distrokid_metadata.json"
     with open(path, "w", encoding="utf-8") as f:
         json.dump(metadata, f, ensure_ascii=False, indent=2)
-    return path
 
 def run_single(style):
     date_str = datetime.now().strftime("%Y%m%d")
     folder = "output/" + date_str + "_" + style["genre"].replace(" ", "_")
     Path(folder).mkdir(parents=True, exist_ok=True)
-    print("Generando cancion: " + style["genre"] + " | " + style["artist"])
+    print("Generando: " + style["genre"] + " | " + style["artist"])
     concept = generate_song_concept(style)
-    print("Titulo: " + concept["title"] + " - " + style["artist"])
+    print("Titulo: " + concept["title"])
     generate_cover(concept["cover_prompt"], folder + "/cover.jpg")
     generate_audio_suno(concept, style, folder + "/track.mp3")
     save_metadata(concept, style, folder)
@@ -205,16 +222,24 @@ def run():
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "all":
+        skip = [5, 9]
+        count = 0
         for i, style in enumerate(STYLES):
-            print("\n--- Generando " + str(i+1) + " de " + str(len(STYLES)) + " ---")
+            if i in skip:
+                print("Saltando: " + style["genre"])
+                continue
+            if count >= 5:
+                print("Limite de 5 canciones alcanzado")
+                break
+            print("\n--- Generando " + str(count+1) + " de 5 ---")
             try:
                 run_single(style)
+                count += 1
             except Exception as e:
                 print("ERROR en " + style["artist"] + ": " + str(e))
-                print("Continuando con el siguiente...")
+                print("Continuando...")
     elif len(sys.argv) > 1 and sys.argv[1].isdigit():
         style = STYLES[int(sys.argv[1])]
-        print("Generando estilo especifico: " + style["genre"] + " - " + style["artist"])
         run_single(style)
     else:
         run()
