@@ -253,8 +253,14 @@ if __name__ == "__main__":
             except Exception as e:
                 print("ERROR en " + style["artist"] + ": " + str(e))
                 print("Continuando...")
-    elif len(sys.argv) > 1 and sys.argv[1].isdigit():
-        style = STYLES[int(sys.argv[1])]
-        run_single(style)
+    elif len(sys.argv) > 1 and all(arg.isdigit() for arg in sys.argv[1:]):
+        for arg in sys.argv[1:]:
+            style = STYLES[int(arg)]
+            print("\n--- Generando estilo " + arg + " ---")
+            try:
+                run_single(style)
+            except Exception as e:
+                print("ERROR en " + style["artist"] + ": " + str(e))
+                print("Continuando...")
     else:
         run()
