@@ -19,24 +19,24 @@ SUNO_GENERATE = "https://api.apipass.dev/api/v1/jobs/createTask"
 SUNO_FETCH = "https://api.apipass.dev/api/v1/jobs/recordInfo"
 
 STYLES = [
-    {"genre": "Lo-fi jazz",              "mood": "relaxing study",        "bpm": 75,  "lang": "instrumental", "artist": "Mork",          "album_series": "Late Night Sessions", "type": "instrumental"},
-    {"genre": "Pop espanol femenino",    "mood": "feel good verano",      "bpm": 118, "lang": "espanol",      "artist": "Loxe",          "album_series": "Verano Eterno",       "type": "pop"},
-    {"genre": "80s synth-pop",           "mood": "nostalgic neon",        "bpm": 120, "lang": "english",      "artist": "Noctua",        "album_series": "Electric Dreams",     "type": "pop"},
-    {"genre": "90s R&B soul",            "mood": "smooth romantic",       "bpm": 88,  "lang": "english",      "artist": "Sable and Co",  "album_series": "Velvet Nights",       "type": "pop"},
-    {"genre": "Clasica piano",           "mood": "focus concentration",   "bpm": 60,  "lang": "instrumental", "artist": "Eira",          "album_series": "Focus Series",        "type": "instrumental"},
-    {"genre": "Reggaeton actual",        "mood": "party energy",          "bpm": 95,  "lang": "espanol",      "artist": "Vael",          "album_series": "Ritmo Urbano",        "type": "pop"},
-    {"genre": "70s funk",                "mood": "groove dance",          "bpm": 105, "lang": "english",      "artist": "The Coppers",   "album_series": "Funk Forever",        "type": "pop"},
-    {"genre": "Bossa nova",              "mood": "cafe afternoon",        "bpm": 130, "lang": "portugues",    "artist": "Nevoa",         "album_series": "Cafe do Sol",         "type": "pop"},
-    {"genre": "Indie pop 2020s",         "mood": "melancholic hopeful",   "bpm": 100, "lang": "english",      "artist": "Pale June",     "album_series": "Silver Lining",       "type": "pop"},
-    {"genre": "Flamenco pop",            "mood": "pasion espanola",       "bpm": 85,  "lang": "espanol",      "artist": "Lena",          "album_series": "Alma Flamenca",       "type": "pop"},
-    {"genre": "Ambient chill",           "mood": "sleep meditation",      "bpm": 55,  "lang": "instrumental", "artist": "Mork",          "album_series": "Weightless",          "type": "instrumental"},
-    {"genre": "Hip-hop boom bap",        "mood": "raw authentic",         "bpm": 90,  "lang": "english",      "artist": "Fenn",          "album_series": "Street Scriptures",   "type": "pop"},
-    {"genre": "Pop espanol boyband",     "mood": "feel good pop",         "bpm": 110, "lang": "espanol",      "artist": "Latitud",       "album_series": "Horizonte",           "type": "pop"},
-    {"genre": "Cuentos infantiles",      "mood": "fun magical",           "bpm": 90,  "lang": "espanol",      "artist": "Copo y Pip",    "album_series": "Cuentos de Colores",  "type": "pop"},
-    {"genre": "Cantautor espanol",       "mood": "poetic introspective",  "bpm": 75,  "lang": "espanol",      "artist": "Tomas Via",     "album_series": "Cuadernos de Viaje",  "type": "cantautor"},
-    {"genre": "Jazz instrumental",       "mood": "late night cool",       "bpm": 95,  "lang": "instrumental", "artist": "Mork",          "album_series": "Blue Hours",          "type": "instrumental"},
-    {"genre": "Balada romantica latina", "mood": "romantic orchestral",   "bpm": 70,  "lang": "espanol",      "artist": "Alvaro Ciel",   "album_series": "Corazon Eterno",      "type": "luis_miguel"},
-    {"genre": "Balada internacional",    "mood": "romantic multilingual", "bpm": 68,  "lang": "multilingual", "artist": "Eduardo Laine", "album_series": "Sin Fronteras",       "type": "julio_iglesias"},
+    {"genre": "Lo-fi jazz",              "mood": "relaxing study",        "bpm": 75,  "lang": "instrumental", "artist": "Mork",          "album_series": "Late Night Sessions", "type": "instrumental",  "voice": ""},
+    {"genre": "Pop espanol femenino",    "mood": "feel good verano",      "bpm": 118, "lang": "espanol",      "artist": "Loxe",          "album_series": "Verano Eterno",       "type": "pop",           "voice": "female pop voice, clear and bright, young Spanish singer, emotional delivery, melodic"},
+    {"genre": "80s synth-pop",           "mood": "nostalgic neon",        "bpm": 120, "lang": "english",      "artist": "Noctua",        "album_series": "Electric Dreams",     "type": "pop",           "voice": "androgynous synth-pop voice, cold and ethereal, 80s new wave delivery, reverb vocals"},
+    {"genre": "Pop soul funk",           "mood": "upbeat feel good",      "bpm": 110, "lang": "english",      "artist": "Lievo",         "album_series": "Gold Rush",           "type": "bruno_mars",    "voice": "charismatic male pop soul voice, smooth and powerful, funk-influenced, Bruno Mars style, tight and energetic"},
+    {"genre": "Clasica piano",           "mood": "focus concentration",   "bpm": 60,  "lang": "instrumental", "artist": "Eira",          "album_series": "Focus Series",        "type": "instrumental",  "voice": ""},
+    {"genre": "Reggaeton actual",        "mood": "party energy",          "bpm": 95,  "lang": "espanol",      "artist": "Vael",          "album_series": "Ritmo Urbano",        "type": "pop",           "voice": "male urban voice, deep chest voice, reggaeton flow, Latin urban style, confident delivery"},
+    {"genre": "90s 2020s R&B soul",      "mood": "smooth romantic",       "bpm": 88,  "lang": "english",      "artist": "Sable and Co",  "album_series": "Velvet Nights",       "type": "pop",           "voice": "smooth male R&B voice, rich and velvety, soulful falsetto, neo soul modern delivery"},
+    {"genre": "Bossa nova",              "mood": "cafe afternoon",        "bpm": 130, "lang": "portugues",    "artist": "Nevoa",         "album_series": "Cafe do Sol",         "type": "pop",           "voice": "soft female Brazilian voice, breathy and intimate, bossa nova whisper tone, warm and flowing"},
+    {"genre": "Indie pop 2020s",         "mood": "melancholic hopeful",   "bpm": 100, "lang": "english",      "artist": "Pale June",     "album_series": "Silver Lining",       "type": "pop",           "voice": "delicate female indie voice, breathy and introspective, bedroom pop tone, slightly vulnerable"},
+    {"genre": "Flamenco pop",            "mood": "pasion espanola",       "bpm": 85,  "lang": "espanol",      "artist": "Lena",          "album_series": "Alma Flamenca",       "type": "pop",           "voice": "powerful Spanish female voice, passionate flamenco delivery, raw emotion, deep and expressive"},
+    {"genre": "Ambient chill",           "mood": "sleep meditation",      "bpm": 55,  "lang": "instrumental", "artist": "Mork",          "album_series": "Weightless",          "type": "instrumental",  "voice": ""},
+    {"genre": "Hip-hop boom bap",        "mood": "raw authentic",         "bpm": 90,  "lang": "english",      "artist": "Fenn",          "album_series": "Street Scriptures",   "type": "pop",           "voice": "deep male rap voice, measured and deliberate, boom bap flow, raw and authentic delivery"},
+    {"genre": "Pop espanol boyband",     "mood": "feel good pop",         "bpm": 110, "lang": "espanol",      "artist": "Latitud",       "album_series": "Horizonte",           "type": "pop",           "voice": "multiple young male voices, harmonized boyband style, clean and energetic, Spanish pop delivery"},
+    {"genre": "Cuentos infantiles",      "mood": "fun magical",           "bpm": 90,  "lang": "espanol",      "artist": "Copo y Pip",    "album_series": "Cuentos de Colores",  "type": "pop",           "voice": "warm friendly voice, playful and expressive, children storyteller tone, clear and cheerful"},
+    {"genre": "Cantautor espanol",       "mood": "poetic introspective",  "bpm": 75,  "lang": "espanol",      "artist": "Tomas Via",     "album_series": "Cuadernos de Viaje",  "type": "cantautor",     "voice": "soft intimate male voice, acoustic folk singer-songwriter, slightly raspy, Spanish accent, whispered intensity"},
+    {"genre": "Jazz instrumental",       "mood": "late night cool",       "bpm": 95,  "lang": "instrumental", "artist": "Mork",          "album_series": "Blue Hours",          "type": "instrumental",  "voice": ""},
+    {"genre": "Balada romantica latina", "mood": "romantic orchestral",   "bpm": 70,  "lang": "espanol",      "artist": "Alvaro Ciel",   "album_series": "Corazon Eterno",      "type": "luis_miguel",   "voice": "powerful male tenor, smooth and controlled vibrato, romantic Latin baritone, classic bolero delivery, passionate"},
+    {"genre": "Balada internacional",    "mood": "romantic multilingual", "bpm": 68,  "lang": "multilingual", "artist": "Eduardo Laine", "album_series": "Sin Fronteras",       "type": "julio_iglesias","voice": "mature male baritone, warm and intimate, slightly raspy, romantic European crooner, charming and elegant"},
 ]
 
 THEMES = [
@@ -55,6 +55,7 @@ COVER_STYLES = {
     "instrumental":   "minimalist abstract landscape, atmospheric, cinematic, muted tones, no people",
     "pop":            "stylized artistic portrait, painterly illustration, bold graphic art, editorial magazine style, no photorealism",
     "cantautor":      "intimate charcoal sketch portrait, warm tones, folk album cover aesthetic, hand-drawn feel",
+    "bruno_mars":     "vibrant retro-modern pop art illustration, gold and warm tones, funky energy, glamorous, no photorealism",
     "luis_miguel":    "elegant illustrated portrait, classic Latin pop aesthetic, 1990s romantic album cover style, oil painting feel, sophisticated",
     "julio_iglesias": "timeless illustrated portrait, international romantic ballad aesthetic, warm Mediterranean tones, classic vinyl cover style, artistic",
 }
@@ -76,6 +77,9 @@ def generate_song_concept(style):
     elif song_type == "cantautor":
         lyrics_instruction = "'full lyrics in the style of Jorge Drexler or Leonard Cohen: poetic, metaphorical, complex imagery, unexpected rhymes, narrative storytelling, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
         lyrics_detail = "Write deep, poetic lyrics. Use metaphors, imagery, narrative. Avoid cliches. Theme: " + theme
+    elif song_type == "bruno_mars":
+        lyrics_instruction = "'full lyrics in the style of Bruno Mars: catchy, fun, confident, upbeat pop soul funk, hooky chorus, playful and energetic, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
+        lyrics_detail = "Write fun, catchy, confident lyrics. Upbeat feel-good energy. Mix of pop, soul and funk. Theme: " + theme
     elif song_type == "luis_miguel":
         lyrics_instruction = "'full lyrics in the style of Luis Miguel: romantic, sophisticated, grand orchestral ballad, passionate, classic Latin pop, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
         lyrics_detail = "Write elegant romantic lyrics in Spanish. Grand orchestral feel, timeless love themes, sophisticated vocabulary. Theme: " + theme
@@ -105,11 +109,13 @@ def generate_song_concept(style):
         "BPM: " + str(style["bpm"]) + "\n"
         "Language: " + style["lang"] + "\n"
         "Artist: " + style["artist"] + "\n"
+        "Voice style (include this in suno_prompt): " + style.get("voice", "") + "\n"
         "Theme: " + theme + "\n"
         "Target duration: " + str(target_duration) + " seconds\n"
         + lyrics_detail + "\n"
         "IMPORTANT: Be completely original. Avoid fire, night, dance floor cliches. "
-        "Every song must be unique. Seed: " + str(random.randint(1, 999999))
+        "Every song must be unique. Always include the voice style descriptor in suno_prompt. "
+        "Seed: " + str(random.randint(1, 999999))
     )
 
     msg = client.messages.create(
@@ -150,11 +156,17 @@ def generate_cover(prompt, style_type, output_path):
 def generate_audio_suno(concept, style, output_path):
     print("Generando audio Suno V5...")
     is_instrumental = style["lang"] == "instrumental"
+    voice = style.get("voice", "")
     headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + APIPASS_KEY,
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
     }
+
+    suno_prompt = concept["suno_prompt"]
+    if voice and voice not in suno_prompt:
+        suno_prompt = suno_prompt + ", " + voice
+
     payload = {
         "model": "suno/generate",
         "input": {
@@ -163,13 +175,13 @@ def generate_audio_suno(concept, style, output_path):
             "style": style["genre"],
             "title": concept["title"],
             "instrumental": is_instrumental,
-            "prompt": concept["suno_prompt"],
+            "prompt": suno_prompt,
             "weirdnessConstraint": 0.3,
             "styleWeight": 0.7,
         }
     }
     if not is_instrumental:
-        payload["input"]["prompt"] = concept["lyrics"]
+        payload["input"]["prompt"] = concept["lyrics"] + "\n\n[VOICE STYLE: " + voice + "]"
 
     response = requests.post(SUNO_GENERATE, headers=headers, json=payload, timeout=30)
     if response.status_code != 200:
