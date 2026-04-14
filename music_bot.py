@@ -17,7 +17,7 @@ APIPASS_KEY = os.environ["APIPASS_KEY"]
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
-HF_IMAGE_API = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev"
+HF_IMAGE_API = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
 SUNO_GENERATE = "https://api.apipass.dev/api/v1/jobs/createTask"
 SUNO_FETCH = "https://api.apipass.dev/api/v1/jobs/recordInfo"
 
