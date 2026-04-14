@@ -275,7 +275,7 @@ def generate_song_concept(style):
     )
 
     msg = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -338,7 +338,7 @@ def generate_album_track(subgenre, artist_key, style, track_num, total_tracks, t
     )
 
     msg = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
