@@ -13,6 +13,8 @@ import io
 ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 HF_TOKEN = os.environ["HF_API_TOKEN"]
 APIPASS_KEY = os.environ["APIPASS_KEY"]
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 HF_IMAGE_API = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-dev"
 SUNO_GENERATE = "https://api.apipass.dev/api/v1/jobs/createTask"
@@ -39,6 +41,42 @@ STYLES = [
     {"genre": "80s pop dance",           "mood": "euphoric dancefloor",       "bpm": 120, "lang": "english",      "artist": "Dayne Cross",   "album_series": "Neon Nights",         "type": "george_michael","voice": "smooth charismatic male voice, silky and powerful, George Michael style, soulful pop with edge, confident and seductive"},
 ]
 
+ALBUM_TRACKS = {
+    "Mork_Ripley":     {"tracks": 9,  "subgenres": ["cinematic jazz noir", "melancholic jazz ballad", "sophisticated jazz groove", "moody jazz instrumental", "italian noir jazz", "slow jazz cinema", "jazz nocturne", "cinematic jazz waltz", "bittersweet jazz finale"]},
+    "Mork_Weightless": {"tracks": 9,  "subgenres": ["deep ambient meditation", "ambient sleep drone", "atmospheric ambient pad", "calm ambient texture", "ambient chill wave", "slow ambient drift", "ambient breath", "floating ambient space", "peaceful ambient close"]},
+    "Mork_Blue":       {"tracks": 9,  "subgenres": ["late night jazz cool", "smooth jazz groove", "jazz trio improvisation", "mellow jazz piano", "cool jazz swing", "jazz after midnight", "soft jazz saxophone", "jazz brush drums", "blue jazz finale"]},
+    "Loxe":            {"tracks": 11, "subgenres": ["upbeat summer pop", "feel good pop anthem", "breezy indie pop", "pop dance floor", "emotional pop ballad", "catchy pop hook", "pop guitar driven", "dreamy pop chorus", "pop mid tempo", "pop R&B fusion", "summer pop finale"]},
+    "Stone Harbor":    {"tracks": 11, "subgenres": ["AOR anthem opener", "soft rock ballad", "driving AOR rock", "classic rock mid tempo", "AOR power ballad", "rock guitar solo", "melodic rock verse", "AOR chorus driven", "soft rock intimate", "rock road song", "AOR epic finale"]},
+    "Lievo":           {"tracks": 12, "subgenres": ["funk pop opener", "pop soul groove", "R&B ballad", "funk groove mid tempo", "pop rock energy", "soul ballad piano", "pop funk playful", "R&B pop smooth", "funk soul uplifting", "pop dance party", "soul pop bittersweet", "epic funk finale"]},
+    "Eira":            {"tracks": 10, "subgenres": ["classical piano focus", "minimalist piano study", "piano meditation", "classical solo piano", "piano nocturne", "modern classical piano", "piano ambient texture", "piano emotional theme", "classical piano interlude", "piano grand finale"]},
+    "Vael":            {"tracks": 14, "subgenres": ["reggaeton party opener", "perreo urbano", "reggaeton romantic", "trap latino", "reggaeton mid tempo", "urbano pop fusion", "reggaeton dance floor", "latin trap slow", "reggaeton groove", "urbano R&B", "reggaeton anthem", "latin pop crossover", "reggaeton emotional", "urbano finale"]},
+    "Sable":           {"tracks": 11, "subgenres": ["neo soul opener", "smooth R&B groove", "soul ballad intimate", "R&B mid tempo", "neo soul jazz fusion", "smooth soul chorus", "R&B slow jam", "soul pop crossover", "neo soul electric", "R&B emotional", "soul finale"]},
+    "Nevoa":           {"tracks": 10, "subgenres": ["bossa nova cafe", "samba soft groove", "bossa nova romantic", "MPB acoustic", "bossa nova jazz", "soft samba ballad", "bossa nova afternoon", "MPB pop fusion", "bossa nova intimate", "bossa nova sunset finale"]},
+    "Pale June":       {"tracks": 11, "subgenres": ["indie pop opener", "bedroom pop intimate", "indie folk acoustic", "dream pop chorus", "indie pop melancholic", "lo-fi indie groove", "indie pop anthem", "bedroom pop emotional", "indie acoustic ballad", "dream pop atmospheric", "indie pop finale"]},
+    "Lena":            {"tracks": 9,  "subgenres": ["flamenco jazz fusion opener", "jazz flamenco ballad", "flamenco groove jazz", "jazz duende", "flamenco pop fusion", "jazz flamenco intimate", "flamenco jazz instrumental", "jazz flamenco emotional", "flamenco jazz finale"]},
+    "Fenn":            {"tracks": 14, "subgenres": ["boom bap intro", "raw hip hop verse", "boom bap groove", "hip hop storytelling", "boom bap hard", "hip hop emotional", "boom bap jazz sample", "hip hop introspective", "boom bap anthem", "hip hop poetic", "boom bap raw", "hip hop cinematic", "boom bap soul", "hip hop finale"]},
+    "Latitud":         {"tracks": 12, "subgenres": ["boyband pop opener", "pop harmony anthem", "boyband ballad", "pop dance energy", "boyband mid tempo", "pop acoustic intimate", "boyband R&B fusion", "pop summer anthem", "boyband emotional", "pop rock crossover", "boyband farewell", "pop finale epic"]},
+    "Tomas Via":       {"tracks": 11, "subgenres": ["cantautor acoustic opener", "folk poetry verse", "cantautor intimate ballad", "acoustic storytelling", "cantautor jazz touch", "folk acoustic mid tempo", "cantautor emotional depth", "acoustic guitar driven", "cantautor poetic", "folk ballad intimate", "cantautor finale"]},
+    "Alvaro Ciel":     {"tracks": 12, "subgenres": ["balada romantica opener", "orquesta romantica", "bolero moderno", "balada pop latina", "romantica intimista", "balada con mariachi", "pop latino romantico", "balada dramatica", "romantica con cuerdas", "bolero jazz fusion", "balada final emotiva", "gran finale orquestal"]},
+    "Eduardo Laine":   {"tracks": 11, "subgenres": ["balada internacional opener", "romantic ballad English", "balada francesa", "international pop romantic", "balada italiana", "romantic mid tempo", "international ballad intimate", "pop romantico multilingual", "balada con orquesta", "romantic acoustic", "international finale"]},
+    "Dayne Cross":     {"tracks": 11, "subgenres": ["80s pop dance opener", "synth pop groove", "80s dance anthem", "pop ballad 80s", "synth pop mid tempo", "80s funk pop", "dance pop chorus", "80s romantic ballad", "synth pop driving", "80s pop emotional", "80s dance finale"]},
+}
+
+GOLD_RUSH_TRACKLIST = [
+    {"track": 1,  "subgenre": "funk pop",        "mood": "explosive party opener",       "bpm": 118, "vibe": "Uptown Funk, horn section, brass, tight groove, big band energy",               "is_single": True},
+    {"track": 2,  "subgenre": "pop soul",         "mood": "feel good celebration",        "bpm": 112, "vibe": "24K Magic vibes, glittery synths, confident swagger, dancefloor energy",        "is_single": False},
+    {"track": 3,  "subgenre": "R&B ballad",       "mood": "romantic tender",              "bpm": 72,  "vibe": "Just the Way You Are style, piano led, warm strings, intimate and heartfelt",   "is_single": False},
+    {"track": 4,  "subgenre": "funk groove",      "mood": "smooth sexy groove",           "bpm": 105, "vibe": "Treasure style, vintage funk, tight bass, falsetto moments",                    "is_single": False},
+    {"track": 5,  "subgenre": "pop rock",         "mood": "energetic anthemic",           "bpm": 128, "vibe": "Locked Out of Heaven energy, driving drums, rock guitar, euphoric chorus",      "is_single": False},
+    {"track": 6,  "subgenre": "soul ballad",      "mood": "emotional vulnerable",         "bpm": 68,  "vibe": "When I Was Your Man style, solo piano, raw emotion, confessional lyrics",      "is_single": False},
+    {"track": 7,  "subgenre": "pop funk",         "mood": "carefree playful",             "bpm": 108, "vibe": "The Lazy Song vibes, acoustic guitar, laid back, witty lyrics",                "is_single": False},
+    {"track": 8,  "subgenre": "R&B pop",          "mood": "smooth romantic",              "bpm": 80,  "vibe": "Versace on the Floor style, lush R&B, seductive, rich production",             "is_single": False},
+    {"track": 9,  "subgenre": "funk soul",        "mood": "uplifting joyful",             "bpm": 98,  "vibe": "Count on Me style, warm acoustic, feel good friendship anthem",                "is_single": False},
+    {"track": 10, "subgenre": "pop dance",        "mood": "high energy party",            "bpm": 122, "vibe": "That's What I Like energy, punchy beats, cocky fun",                           "is_single": False},
+    {"track": 11, "subgenre": "soul pop",         "mood": "bittersweet nostalgic",        "bpm": 76,  "vibe": "Grenade style ballad, building emotion, powerful bridge",                      "is_single": False},
+    {"track": 12, "subgenre": "epic funk finale", "mood": "triumphant closing statement", "bpm": 115, "vibe": "Finisher track, full band, gospel choir backing, massive ending",               "is_single": False},
+]
+
 THEMES = [
     "a childhood memory", "migration and nostalgia", "a letter never sent",
     "the smell of rain on dry earth", "a city seen from a train",
@@ -52,28 +90,53 @@ THEMES = [
 ]
 
 COVER_STYLES = {
-    "instrumental":     "muted tones, minimal composition, analog film grain, soft focus, like ECM Records or Blue Note jazz album cover, no people, no text, real photography aesthetic",
-    "pop":              "clean editorial photography style, modern Spotify pop cover, soft natural light, muted palette, like Rosalia or Aitana album cover aesthetic, no text, no logos",
-    "cantautor":        "black and white analog film photography, grainy, intimate, like Jorge Drexler or Joaquin Sabina album cover, stark and poetic, no text",
-    "bruno_mars":       "bold retro photography, warm golden tones, 70s soul album aesthetic, like vintage Motown or Bruno Mars Unorthodox Jukebox cover style, no text",
-    "aor":              "classic 1970s 1980s American rock album photography, warm cinematic tones, highway or landscape, like Foreigner or Billy Joel album cover aesthetic, analog film, no text",
-    "george_michael":   "glossy 1980s pop photography, neon lights, urban night scene, like Wham or George Michael Faith album cover aesthetic, stylish and cinematic, no text",
-    "flamenco_jazz":    "intimate Spanish courtyard at golden hour, worn guitar leaning against whitewashed wall, shadow and light, analog film grain, like a Paco de Lucia or Ketama album cover, no text",
-    "luis_miguel":      "elegant soft focus portrait style, warm romantic lighting, like classic 1990s Latin pop album cover, sophisticated and timeless, no text",
-    "julio_iglesias":   "classic vinyl album photography aesthetic, warm Mediterranean light, like 1980s international romantic ballad cover, elegant and timeless, no text",
+    "instrumental":   "muted tones, minimal composition, analog film grain, soft focus, like ECM Records or Blue Note jazz album cover, no people, no text, real photography aesthetic",
+    "pop":            "clean editorial photography style, modern Spotify pop cover, soft natural light, muted palette, like Rosalia or Aitana album cover aesthetic, no text, no logos",
+    "cantautor":      "black and white analog film photography, grainy, intimate, like Jorge Drexler or Joaquin Sabina album cover, stark and poetic, no text",
+    "bruno_mars":     "bold retro photography, warm golden tones, 70s soul album aesthetic, like vintage Motown or Bruno Mars Unorthodox Jukebox cover style, no text",
+    "aor":            "classic 1970s 1980s American rock album photography, warm cinematic tones, highway or landscape, like Foreigner or Billy Joel album cover aesthetic, analog film, no text",
+    "george_michael": "glossy 1980s pop photography, neon lights, urban night scene, like Wham or George Michael Faith album cover aesthetic, stylish and cinematic, no text",
+    "flamenco_jazz":  "intimate Spanish courtyard at golden hour, worn guitar leaning against whitewashed wall, shadow and light, analog film grain, like a Paco de Lucia or Ketama album cover, no text",
+    "luis_miguel":    "elegant soft focus portrait style, warm romantic lighting, like classic 1990s Latin pop album cover, sophisticated and timeless, no text",
+    "julio_iglesias": "classic vinyl album photography aesthetic, warm Mediterranean light, like 1980s international romantic ballad cover, elegant and timeless, no text",
 }
 
 VIDEO_PROMPTS = {
-    "instrumental":     "cinematic slow pan over atmospheric landscape, soft light, moody and contemplative, no people, film quality",
-    "pop":              "young artist performing in a stylish urban setting, colorful and energetic, modern music video aesthetic",
-    "cantautor":        "singer with acoustic guitar in intimate venue, warm light, emotional performance, cinematic close-ups",
-    "bruno_mars":       "charismatic performer on stage with full band, retro soul aesthetic, golden lighting, energetic crowd",
-    "aor":              "rock band performing at sunset outdoor concert, cinematic wide shots, americana feel, emotional and powerful",
-    "george_michael":   "stylish performer in 1980s neon-lit urban scene, dancing and singing, glossy pop video aesthetic",
-    "flamenco_jazz":    "flamenco dancer and jazz musician in intimate Andalusian setting, dramatic shadows, passionate and sophisticated",
-    "luis_miguel":      "elegant romantic singer on grand stage with orchestra, warm golden lighting, classic Latin pop concert",
-    "julio_iglesias":   "charming international artist performing in Mediterranean setting, elegant and romantic, timeless classic feel",
+    "instrumental":   "cinematic slow pan over atmospheric landscape, soft light, moody and contemplative, no people, film quality",
+    "pop":            "young artist performing in a stylish urban setting, colorful and energetic, modern music video aesthetic",
+    "cantautor":      "singer with acoustic guitar in intimate venue, warm light, emotional performance, cinematic close-ups",
+    "bruno_mars":     "charismatic performer on stage with full band, retro soul aesthetic, golden lighting, energetic crowd",
+    "aor":            "rock band performing at sunset outdoor concert, cinematic wide shots, americana feel, emotional and powerful",
+    "george_michael": "stylish performer in 1980s neon-lit urban scene, dancing and singing, glossy pop video aesthetic",
+    "flamenco_jazz":  "flamenco dancer and jazz musician in intimate Andalusian setting, dramatic shadows, passionate and sophisticated",
+    "luis_miguel":    "elegant romantic singer on grand stage with orchestra, warm golden lighting, classic Latin pop concert",
+    "julio_iglesias": "charming international artist performing in Mediterranean setting, elegant and romantic, timeless classic feel",
 }
+
+ALBUM_PROGRESS_FILE = "album_progress.json"
+
+def send_telegram(message):
+    if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+    try:
+        url = "https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage"
+        requests.post(url, json={
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": message,
+            "parse_mode": "HTML"
+        }, timeout=10)
+    except Exception as e:
+        print("Telegram error: " + str(e))
+
+def load_progress():
+    if os.path.exists(ALBUM_PROGRESS_FILE):
+        with open(ALBUM_PROGRESS_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_progress(progress):
+    with open(ALBUM_PROGRESS_FILE, "w") as f:
+        json.dump(progress, f, indent=2)
 
 def pick_style():
     day = datetime.now().timetuple().tm_yday
@@ -94,26 +157,29 @@ def generate_song_concept(style):
             lyrics_detail = "No lyrics needed - instrumental only."
     elif song_type == "cantautor":
         lyrics_instruction = "'full lyrics in the style of Jorge Drexler or Leonard Cohen: poetic, metaphorical, complex imagery, unexpected rhymes, narrative storytelling, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
-        lyrics_detail = "Write deep, poetic lyrics. Use metaphors, imagery, narrative. Avoid cliches. Theme: " + theme
+        lyrics_detail = ("Write deep, poetic lyrics. Use metaphors, imagery, narrative. Avoid cliches. "
+                        "NEVER use words like 'caricias', 'sencillo', 'corazon', 'alma', 'latir', 'susurro', "
+                        "'brillo', 'magia', 'eterno', 'destino' or any romantic cliche. "
+                        "Be original, unexpected, literary. Theme: " + theme)
     elif song_type == "bruno_mars":
         lyrics_instruction = "'full lyrics in the style of Bruno Mars: catchy, fun, confident, upbeat pop soul funk, hooky chorus, playful and energetic, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
         lyrics_detail = "Write fun, catchy, confident lyrics. Upbeat feel-good energy. Mix of pop, soul and funk. Theme: " + theme
     elif song_type == "aor":
         lyrics_instruction = "'full lyrics in the style of AOR classic rock: anthemic, emotional, powerful choruses, storytelling, like Foreigner or Billy Joel or Joe Cocker, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
-        lyrics_detail = "Write powerful, emotional rock lyrics in English. Anthemic feel, universal themes of love, longing, freedom. Inspired by Foreigner, Billy Joel, Joe Cocker, Christopher Cross, Doobie Brothers. Theme: " + theme
+        lyrics_detail = "Write powerful, emotional rock lyrics in English. Theme: " + theme
     elif song_type == "george_michael":
         lyrics_instruction = "'full lyrics in the style of George Michael or Wham: catchy, euphoric, romantic, danceable 80s pop, hooky chorus, fun and emotional, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
-        lyrics_detail = "Write catchy euphoric pop lyrics in English. 80s dancefloor energy, romantic themes, fun and carefree. Inspired by George Michael, Wham, Pet Shop Boys. Theme: " + theme
+        lyrics_detail = "Write catchy euphoric pop lyrics in English. 80s dancefloor energy. Theme: " + theme
     elif song_type == "flamenco_jazz":
-        lyrics_instruction = "'full lyrics in the style of Antonio Carmona or Ketama: sophisticated flamenco with jazz harmony, poetic Spanish lyrics, complex emotions, duende, unexpected chord changes, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
-        lyrics_detail = "Write sophisticated, poetic flamenco-jazz lyrics in Spanish. Complex emotions, duende, references to Andalucia, love and loss with unexpected metaphors. Influenced by Antonio Carmona, Ketama, Pata Negra. Theme: " + theme
+        lyrics_instruction = "'full lyrics in the style of Antonio Carmona or Ketama: sophisticated flamenco with jazz harmony, poetic Spanish lyrics, complex emotions, duende, 3 verses + 2 choruses + bridge'"
+        lyrics_detail = "Write sophisticated flamenco-jazz lyrics in Spanish. Theme: " + theme
     elif song_type == "luis_miguel":
-        lyrics_instruction = "'full lyrics in the style of Luis Miguel: romantic, sophisticated, grand orchestral ballad, passionate, classic Latin pop, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
-        lyrics_detail = "Write elegant romantic lyrics in Spanish. Grand orchestral feel, timeless love themes, sophisticated vocabulary. Theme: " + theme
+        lyrics_instruction = "'full lyrics in the style of Luis Miguel: romantic, sophisticated, grand orchestral ballad, passionate, 3 verses + 2 choruses + bridge'"
+        lyrics_detail = "Write elegant romantic lyrics in Spanish. Theme: " + theme
     elif song_type == "julio_iglesias":
         lang_choice = random.choice(["Spanish", "English", "French", "Italian"])
-        lyrics_instruction = "'full lyrics in the style of Julio Iglesias: romantic international ballad in " + lang_choice + ", charming, elegant, universal love themes, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
-        lyrics_detail = "Write in " + lang_choice + ". Warm, intimate, romantic. International appeal. Theme: " + theme
+        lyrics_instruction = "'full lyrics in the style of Julio Iglesias: romantic international ballad in " + lang_choice + ", charming, elegant, 3 verses + 2 choruses + bridge'"
+        lyrics_detail = "Write in " + lang_choice + ". Warm, intimate, romantic. Theme: " + theme
     else:
         lyrics_instruction = "'full lyrics: catchy but meaningful, 3 verses + 2 choruses + bridge, enough for 3-4 minutes'"
         lyrics_detail = "Write engaging lyrics with a clear story or emotion. Theme: " + theme
@@ -162,6 +228,67 @@ def generate_song_concept(style):
     raw = raw.replace("```json", "").replace("```", "").strip()
     return json.loads(raw)
 
+def generate_album_track(track_info, artist_key, style, track_num, total_tracks, track_titles):
+    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    theme = random.choice(THEMES)
+    song_type = style.get("type", "pop")
+    is_instrumental = style["lang"] == "instrumental"
+    is_single = track_num == 1
+    existing = ", ".join(track_titles) if track_titles else "none yet"
+
+    if is_instrumental:
+        lyrics_instruction = "'[INSTRUMENTAL]'"
+        lyrics_detail = "No lyrics needed - instrumental only."
+    elif song_type == "cantautor":
+        lyrics_instruction = "'full lyrics in the style of Jorge Drexler or Leonard Cohen: poetic, metaphorical, complex imagery, unexpected rhymes, narrative storytelling, 3 verses + 2 choruses + bridge'"
+        lyrics_detail = ("Write deep, poetic lyrics. NEVER use words like 'caricias', 'sencillo', 'corazon', "
+                        "'alma', 'latir', 'susurro', 'brillo', 'magia', 'eterno', 'destino'. "
+                        "Be original, unexpected, literary. Theme: " + theme)
+    else:
+        lyrics_instruction = "'full lyrics: catchy but meaningful, 3 verses + 2 choruses + bridge, 3-4 minutes'"
+        lyrics_detail = "Write engaging lyrics matching the genre and mood. Theme: " + theme
+
+    single_note = ""
+    if is_single:
+        single_note = "This is the LEAD SINGLE — make it the most catchy, radio-friendly, instantly memorable track. Big hook, explosive chorus. "
+
+    prompt = (
+        "You are a professional music producer creating track " + str(track_num) + " of " + str(total_tracks) + " for an album.\n\n"
+        "Artist: " + style["artist"] + "\n"
+        "Album: " + style["album_series"] + "\n"
+        "Genre: " + style["genre"] + "\n"
+        "Subgenre for this track: " + track_info + "\n"
+        "Mood: " + style["mood"] + "\n"
+        "BPM: " + str(style["bpm"]) + "\n"
+        "Language: " + style["lang"] + "\n"
+        "Voice: " + style.get("voice", "") + "\n"
+        "Theme inspiration: " + theme + "\n"
+        "Already used titles: " + existing + "\n\n"
+        + single_note +
+        "Return ONLY a valid JSON object:\n"
+        "{\n"
+        '  "title": "original title — NOT similar to existing titles",\n'
+        '  "artist": "' + style["artist"] + '",\n'
+        '  "album": "' + style["album_series"] + '",\n'
+        '  "track_number": ' + str(track_num) + ',\n'
+        '  "lyrics": ' + lyrics_instruction + ',\n'
+        '  "suno_prompt": "genre + subgenre + mood + instruments + BPM + vocal style, max 200 chars",\n'
+        '  "description": "2 sentence Spotify description",\n'
+        '  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]\n'
+        "}\n\n"
+        "IMPORTANT: Every title and lyrics must be completely original. "
+        "Seed: " + str(random.randint(1, 999999))
+    )
+
+    msg = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=2000,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    raw = msg.content[0].text.strip()
+    raw = raw.replace("```json", "").replace("```", "").strip()
+    return json.loads(raw)
+
 def generate_cover(prompt, style_type, output_path):
     print("Generando caratula con FLUX.1-dev...")
     cover_style = COVER_STYLES.get(style_type, COVER_STYLES["pop"])
@@ -177,10 +304,7 @@ def generate_cover(prompt, style_type, output_path):
     }
     payload = {
         "inputs": full_prompt,
-        "parameters": {
-            "num_inference_steps": 30,
-            "guidance_scale": 3.5,
-        }
+        "parameters": {"num_inference_steps": 30, "guidance_scale": 3.5}
     }
     for i in range(8):
         response = requests.post(HF_IMAGE_API, headers=headers, json=payload, timeout=120)
@@ -200,24 +324,22 @@ def generate_cover(prompt, style_type, output_path):
 
 def generate_audio_suno(concept, style, output_path):
     print("Generando audio Suno V5...")
-    is_instrumental = style["lang"] == "instrumental"
+    is_instrumental = style.get("lang", "english") == "instrumental"
     voice = style.get("voice", "")
     headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + APIPASS_KEY,
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
     }
-
     suno_prompt = concept["suno_prompt"]
     if voice and voice not in suno_prompt:
         suno_prompt = suno_prompt + ", " + voice
-
     payload = {
         "model": "suno/generate",
         "input": {
             "model_version": "V5",
             "customMode": True,
-            "style": style["genre"],
+            "style": style.get("genre", "pop"),
             "title": concept["title"],
             "instrumental": is_instrumental,
             "prompt": suno_prompt,
@@ -269,38 +391,150 @@ def generate_audio_suno(concept, style, output_path):
 def save_metadata(concept, style, folder):
     metadata = {
         "Title": concept["title"],
-        "Artist": style["artist"],
-        "Album": concept["album"],
-        "Genre": style["genre"],
+        "Artist": concept.get("artist", style.get("artist", "")),
+        "Album": concept.get("album", style.get("album_series", "")),
+        "Track": concept.get("track_number", ""),
+        "Genre": style.get("genre", ""),
         "Release Date": datetime.now().strftime("%Y-%m-%d"),
-        "Language": style["lang"],
-        "BPM": style["bpm"],
-        "Description": concept["description"],
-        "Tags": ", ".join(concept["tags"]),
-        "Lyrics": concept["lyrics"],
+        "Language": style.get("lang", ""),
+        "BPM": style.get("bpm", ""),
+        "Description": concept.get("description", ""),
+        "Tags": ", ".join(concept.get("tags", [])),
+        "Lyrics": concept.get("lyrics", ""),
     }
     path = folder + "/distrokid_metadata.json"
     with open(path, "w", encoding="utf-8") as f:
         json.dump(metadata, f, ensure_ascii=False, indent=2)
 
-def save_video_prompt(concept, style, folder):
-    video_style = VIDEO_PROMPTS.get(style.get("type", "pop"), VIDEO_PROMPTS["pop"])
-    video_prompt = (
-        "Music video for '" + concept["title"] + "' by " + style["artist"] + ". "
-        + video_style + ". "
-        "Mood: " + style["mood"] + ". "
-        "Cinematic quality, professional music video production. 16:9 aspect ratio."
-    )
+def save_video_prompt(concept, style, folder, is_single=False):
+    style_type = style.get("type", "pop")
+    video_style = VIDEO_PROMPTS.get(style_type, VIDEO_PROMPTS["pop"])
+    if is_single:
+        video_prompt = (
+            "LEAD SINGLE music video for '" + concept["title"] + "' by " + style.get("artist", "") + ". "
+            + video_style + ". Cinematic quality, professional music video, major label production. "
+            "16:9 aspect ratio. Mood: " + style.get("mood", "") + "."
+        )
+        label = "=== KLING AI VIDEO PROMPT — LEAD SINGLE ⭐ ===\n\n"
+    else:
+        video_prompt = (
+            "Music video for '" + concept["title"] + "' by " + style.get("artist", "") + ". "
+            + video_style + ". Mood: " + style.get("mood", "") + ". Cinematic quality. 16:9 aspect ratio."
+        )
+        label = "=== KLING AI VIDEO PROMPT ===\n\n"
+
     path = folder + "/kling_video_prompt.txt"
     with open(path, "w", encoding="utf-8") as f:
-        f.write("=== KLING AI VIDEO PROMPT ===\n\n")
+        f.write(label)
         f.write("1. Ve a app.klingai.com\n")
         f.write("2. Sube cover.jpg como imagen base\n")
         f.write("3. Pega este prompt:\n\n")
         f.write(video_prompt + "\n\n")
         f.write("4. Duracion: 10 segundos, ratio 16:9\n")
-        f.write("5. Genera 3-4 escenas y unelas con CapCut\n")
-    print("Prompt videoclip guardado: kling_video_prompt.txt")
+        f.write("5. Genera 4-6 escenas y unelas con CapCut\n")
+        if is_single:
+            f.write("\n⭐ ESTE ES EL SINGLE PRINCIPAL DEL ALBUM\n")
+
+def run_daily_rotation():
+    progress = load_progress()
+    generated_count = 0
+    daily_summary = []
+
+    artist_style_map = {
+        "Mork_Ripley":    {**STYLES[0],  "album_series": "Ripley Sessions"},
+        "Mork_Weightless":{**STYLES[10], "album_series": "Weightless"},
+        "Mork_Blue":      {**STYLES[14], "album_series": "Blue Hours"},
+        "Loxe":           STYLES[1],
+        "Stone Harbor":   STYLES[2],
+        "Lievo":          STYLES[3],
+        "Eira":           STYLES[4],
+        "Vael":           STYLES[5],
+        "Sable":          STYLES[6],
+        "Nevoa":          STYLES[7],
+        "Pale June":      STYLES[8],
+        "Lena":           STYLES[9],
+        "Fenn":           STYLES[11],
+        "Latitud":        STYLES[12],
+        "Tomas Via":      STYLES[13],
+        "Alvaro Ciel":    STYLES[15],
+        "Eduardo Laine":  STYLES[16],
+        "Dayne Cross":    STYLES[17],
+    }
+
+    send_telegram("🎵 <b>Music Bot arrancando</b>\nGenerando canciones del día...")
+
+    for artist_key, style in artist_style_map.items():
+        album_info = ALBUM_TRACKS[artist_key]
+        total_tracks = album_info["tracks"]
+        current_track = progress.get(artist_key, 0)
+
+        if current_track >= total_tracks:
+            continue
+
+        track_num = current_track + 1
+        subgenre = album_info["subgenres"][current_track]
+        is_single = track_num == 1
+
+        print("\n=== " + artist_key + " — Track " + str(track_num) + "/" + str(total_tracks) + " ===")
+
+        try:
+            track_titles = []
+            album_folder = "output/" + artist_key.replace(" ", "_") + "_" + style["album_series"].replace(" ", "_")
+            if os.path.exists(album_folder):
+                for f in Path(album_folder).glob("*/concept.json"):
+                    with open(f) as cf:
+                        cd = json.load(cf)
+                        t = cd.get("concept", {}).get("title", "")
+                        if t:
+                            track_titles.append(t)
+
+            concept = generate_album_track(subgenre, artist_key, style, track_num, total_tracks, track_titles)
+            print("Titulo: " + concept["title"])
+
+            Path(album_folder).mkdir(parents=True, exist_ok=True)
+            track_folder = album_folder + "/track_" + str(track_num).zfill(2) + "_" + concept["title"].replace(" ", "_")[:30]
+            Path(track_folder).mkdir(parents=True, exist_ok=True)
+
+            cover_path = album_folder + "/album_cover.jpg"
+            if track_num == 1:
+                generate_cover(concept.get("cover_prompt", style["mood"]), style.get("type", "pop"), cover_path)
+
+            import shutil
+            if os.path.exists(cover_path):
+                shutil.copy2(cover_path, track_folder + "/cover.jpg")
+
+            generate_audio_suno(concept, style, track_folder + "/track.mp3")
+            save_metadata(concept, style, track_folder)
+            save_video_prompt(concept, style, track_folder, is_single=is_single)
+
+            with open(track_folder + "/concept.json", "w", encoding="utf-8") as f:
+                json.dump({"artist_key": artist_key, "track_num": track_num, "subgenre": subgenre, "concept": concept}, f, ensure_ascii=False, indent=2)
+
+            progress[artist_key] = track_num
+            save_progress(progress)
+            generated_count += 1
+
+            single_mark = " ⭐" if is_single else ""
+            daily_summary.append("✅ " + style["artist"] + " — " + concept["title"] + single_mark)
+            print("LISTO: " + style["artist"] + " — " + concept["title"])
+
+        except Exception as e:
+            print("ERROR en " + artist_key + ": " + str(e))
+            daily_summary.append("❌ " + artist_key + " — ERROR: " + str(e)[:50])
+
+        time.sleep(15)
+
+    # Resumen final por Telegram
+    all_done = all(progress.get(k, 0) >= ALBUM_TRACKS[k]["tracks"] for k in ALBUM_TRACKS)
+    summary_text = "🎵 <b>Resumen del día — " + datetime.now().strftime("%d/%m/%Y") + "</b>\n\n"
+    summary_text += "\n".join(daily_summary)
+    summary_text += "\n\n<b>Total generadas hoy: " + str(generated_count) + "</b>"
+    if all_done:
+        summary_text += "\n\n🎉 <b>¡TODOS LOS DISCOS COMPLETADOS!</b>"
+    send_telegram(summary_text)
+
+    print("\n✅ Generacion diaria completada — " + str(generated_count) + " canciones")
+    return generated_count
 
 def run_single(style):
     date_str = datetime.now().strftime("%Y%m%d")
@@ -322,24 +556,25 @@ def run():
     run_single(style)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "all":
+    if len(sys.argv) > 1 and sys.argv[1] == "rotation":
+        run_daily_rotation()
+    elif len(sys.argv) > 1 and sys.argv[1] == "album" and len(sys.argv) > 2 and sys.argv[2].lower() == "lievo":
+        pass
+    elif len(sys.argv) > 1 and sys.argv[1] == "all":
         for i, style in enumerate(STYLES):
             print("\n--- Generando " + str(i+1) + " de " + str(len(STYLES)) + " ---")
             try:
                 run_single(style)
             except Exception as e:
                 print("ERROR en " + style["artist"] + ": " + str(e))
-                print("Continuando...")
             time.sleep(15)
     elif len(sys.argv) > 1 and all(arg.isdigit() for arg in sys.argv[1:]):
         for arg in sys.argv[1:]:
             style = STYLES[int(arg)]
-            print("\n--- Generando estilo " + arg + " ---")
             try:
                 run_single(style)
             except Exception as e:
                 print("ERROR en " + style["artist"] + ": " + str(e))
-                print("Continuando...")
             time.sleep(15)
     else:
         run()
