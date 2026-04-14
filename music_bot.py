@@ -346,8 +346,8 @@ def generate_album_track(subgenre, artist_key, style, track_num, total_tracks, t
     raw = raw.replace("```json", "").replace("```", "").strip()
     return json.loads(raw)
 
-def generate_cover(prompt, style_type, output_path):
-    print("Generando caratula...")
+ def generate_cover(prompt, style_type, output_path):
+    print("Generando caratula con SDXL...")
     cover_style = COVER_STYLES.get(style_type, COVER_STYLES["pop"])
     full_prompt = (
         "album cover photograph, " + prompt + ", " + cover_style +
@@ -356,15 +356,22 @@ def generate_cover(prompt, style_type, output_path):
     )
     headers = {
         "Authorization": "Bearer " + HF_TOKEN,
-        "User-Agent": "Mozilla/5.0",
-        "x-wait-for-model": "true"
+        "Content-Type": "application/json",
+        "x-use-cache": "0"
     }
     payload = {
         "inputs": full_prompt,
-        "parameters": {"num_inference_steps": 30, "guidance_scale": 3.5}
+        "parameters": {
+            "num_inference_steps": 30,
+            "guidance_scale": 7.5,
+            "width": 1024,
+            "height": 1024,
+        }
     }
+    url = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+    
     for i in range(8):
-        response = requests.post(HF_IMAGE_API, headers=headers, json=payload, timeout=120)
+        response = requests.post(url, headers=headers, json=payload, timeout=120)
         if response.status_code == 200:
             img = Image.open(io.BytesIO(response.content))
             img = img.convert("RGB")
@@ -373,10 +380,13 @@ def generate_cover(prompt, style_type, output_path):
             print("Caratula guardada 3000x3000")
             return output_path
         elif response.status_code == 503:
-            print("Esperando FLUX.1-dev... 30s")
+            print("Modelo cargando... espera 30s")
             time.sleep(30)
+        elif response.status_code == 410:
+            print("Error 410 — modelo no disponible, reintentando...")
+            time.sleep(20)
         else:
-            raise Exception("HF Error " + str(response.status_code))
+            raise Exception("HF Error " + str(response.status_code) + ": " + response.text[:200])
     raise Exception("Max retries cover")
 
 def generate_audio_suno(concept, style, output_path):
