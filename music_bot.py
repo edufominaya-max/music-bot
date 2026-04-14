@@ -346,7 +346,7 @@ def generate_album_track(subgenre, artist_key, style, track_num, total_tracks, t
     raw = raw.replace("```json", "").replace("```", "").strip()
     return json.loads(raw)
 
- def generate_cover(prompt, style_type, output_path):
+def generate_cover(prompt, style_type, output_path):
     print("Generando caratula con SDXL...")
     cover_style = COVER_STYLES.get(style_type, COVER_STYLES["pop"])
     full_prompt = (
