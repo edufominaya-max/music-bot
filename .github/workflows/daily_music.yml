@@ -50,5 +50,3 @@ jobs:
           name: daily-music-${{ github.run_id }}
           path: output/
           retention-days: 30
-          path: output/
-          retention-days: 30
