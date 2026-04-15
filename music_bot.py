@@ -22,41 +22,42 @@ SUNO_GENERATE = "https://api.apipass.dev/api/v1/jobs/createTask"
 SUNO_FETCH = "https://api.apipass.dev/api/v1/jobs/recordInfo"
 
 STYLES = [
-    {"genre": "Cinematic jazz",          "mood": "moody italian noir",        "bpm": 70,  "lang": "instrumental", "artist": "Mork",          "album_series": "Ripley Sessions",    "type": "instrumental",  "voice": ""},
-    {"genre": "Pop espanol femenino",    "mood": "feel good verano",          "bpm": 118, "lang": "espanol",      "artist": "Loxe",          "album_series": "Verano Eterno",      "type": "pop",           "voice": "female pop voice, clear and bright, young Spanish singer, emotional delivery, melodic"},
-    {"genre": "AOR soft rock",           "mood": "classic american rock",     "bpm": 110, "lang": "english",      "artist": "Stone Harbor",  "album_series": "Open Road",          "type": "aor",           "voice": "powerful male rock voice, warm and soulful, classic AOR delivery, like Foreigner or Joe Cocker, strong and emotional"},
-    {"genre": "Pop soul funk",           "mood": "upbeat feel good",          "bpm": 110, "lang": "english",      "artist": "Lievo",         "album_series": "Gold Rush",          "type": "bruno_mars",    "voice": "charismatic male pop soul voice, smooth and powerful, funk-influenced, Bruno Mars style, tight and energetic"},
-    {"genre": "Clasica piano",           "mood": "focus concentration",       "bpm": 60,  "lang": "instrumental", "artist": "Eira",          "album_series": "Focus Series",       "type": "instrumental",  "voice": ""},
-    {"genre": "Reggaeton actual",        "mood": "party energy",              "bpm": 95,  "lang": "espanol",      "artist": "Vael",          "album_series": "Ritmo Urbano",       "type": "pop",           "voice": "male urban voice, deep chest voice, reggaeton flow, Latin urban style, confident delivery"},
-    {"genre": "90s 2020s R&B soul",      "mood": "smooth romantic",           "bpm": 88,  "lang": "english",      "artist": "Sable and Co",  "album_series": "Velvet Nights",      "type": "pop",           "voice": "smooth male R&B voice, rich and velvety, soulful falsetto, neo soul modern delivery"},
-    {"genre": "Bossa nova",              "mood": "cafe afternoon",            "bpm": 130, "lang": "portugues",    "artist": "Nevoa",         "album_series": "Cafe do Sol",        "type": "pop",           "voice": "soft female Brazilian voice, breathy and intimate, bossa nova whisper tone, warm and flowing"},
-    {"genre": "Indie pop 2020s",         "mood": "melancholic hopeful",       "bpm": 100, "lang": "english",      "artist": "Pale June",     "album_series": "Silver Lining",      "type": "pop",           "voice": "delicate female indie voice, breathy and introspective, bedroom pop tone, slightly vulnerable"},
-    {"genre": "Jazz flamenco fusion",    "mood": "sophisticated duende",      "bpm": 80,  "lang": "espanol",      "artist": "Lena",          "album_series": "Alma Flamenca",      "type": "flamenco_jazz", "voice": "expressive male flamenco voice, deep and raw, Antonio Carmona style, jazz-influenced, soulful and complex"},
-    {"genre": "Ambient chill",           "mood": "sleep meditation",          "bpm": 55,  "lang": "instrumental", "artist": "Mork",          "album_series": "Weightless",         "type": "instrumental",  "voice": ""},
-    {"genre": "Hip-hop boom bap",        "mood": "raw authentic",             "bpm": 90,  "lang": "english",      "artist": "Fenn",          "album_series": "Street Scriptures",  "type": "pop",           "voice": "deep male rap voice, measured and deliberate, boom bap flow, raw and authentic delivery"},
-    {"genre": "Pop espanol boyband",     "mood": "feel good pop",             "bpm": 110, "lang": "espanol",      "artist": "Latitud",       "album_series": "Horizonte",          "type": "pop",           "voice": "multiple young male voices, harmonized boyband style, clean and energetic, Spanish pop delivery"},
-    {"genre": "Cantautor espanol",       "mood": "poetic introspective",      "bpm": 75,  "lang": "espanol",      "artist": "Tomas Via",     "album_series": "Cuadernos de Viaje", "type": "cantautor",     "voice": "soft intimate male voice, acoustic folk singer-songwriter, slightly raspy, Spanish accent, whispered intensity"},
-    {"genre": "Jazz instrumental",       "mood": "late night cool",           "bpm": 95,  "lang": "instrumental", "artist": "Mork",          "album_series": "Blue Hours",         "type": "instrumental",  "voice": ""},
-    {"genre": "Balada romantica latina", "mood": "romantic orchestral",       "bpm": 70,  "lang": "espanol",      "artist": "Alvaro Ciel",   "album_series": "Corazon Eterno",     "type": "luis_miguel",   "voice": "powerful male tenor, smooth and controlled vibrato, romantic Latin baritone, classic bolero delivery, passionate"},
-    {"genre": "Balada internacional",    "mood": "romantic multilingual",     "bpm": 68,  "lang": "multilingual", "artist": "Eduardo Laine", "album_series": "Sin Fronteras",      "type": "julio_iglesias","voice": "mature male baritone, warm and intimate, slightly raspy, romantic European crooner, charming and elegant"},
-    {"genre": "80s pop dance",           "mood": "euphoric dancefloor",       "bpm": 120, "lang": "english",      "artist": "Dayne Cross",   "album_series": "Neon Nights",        "type": "george_michael","voice": "smooth charismatic male voice, silky and powerful, George Michael style, soulful pop with edge, confident and seductive"},
+    {"genre": "Cinematic jazz ambient",  "mood": "moody nocturnal atmospheric",  "bpm": 70,  "lang": "instrumental", "artist": "Mork",          "album_series": "Nocturne",           "type": "instrumental",  "voice": ""},
+    {"genre": "Pop espanol femenino",    "mood": "feel good verano",             "bpm": 118, "lang": "espanol",      "artist": "Loxe",          "album_series": "Verano Eterno",      "type": "pop",           "voice": "female pop voice, clear and bright, young Spanish singer, emotional delivery, melodic"},
+    {"genre": "AOR soft rock",           "mood": "classic american rock",        "bpm": 110, "lang": "english",      "artist": "Stone Harbor",  "album_series": "Open Road",          "type": "aor",           "voice": "powerful male rock voice, warm and soulful, classic AOR delivery, like Foreigner or Joe Cocker, strong and emotional"},
+    {"genre": "Pop soul funk",           "mood": "upbeat feel good",             "bpm": 110, "lang": "english",      "artist": "Lievo",         "album_series": "Gold Rush",          "type": "bruno_mars",    "voice": "charismatic male pop soul voice, smooth and powerful, funk-influenced, Bruno Mars style, tight and energetic"},
+    {"genre": "Clasica piano",           "mood": "focus concentration",          "bpm": 60,  "lang": "instrumental", "artist": "Eira",          "album_series": "Focus Series",       "type": "instrumental",  "voice": ""},
+    {"genre": "Reggaeton actual",        "mood": "party energy",                 "bpm": 95,  "lang": "espanol",      "artist": "Vael",          "album_series": "Ritmo Urbano",       "type": "pop",           "voice": "male urban voice, deep chest voice, reggaeton flow, Latin urban style, confident delivery"},
+    {"genre": "90s 2020s R&B soul",      "mood": "smooth romantic",              "bpm": 88,  "lang": "english",      "artist": "Sable and Co",  "album_series": "Velvet Nights",      "type": "pop",           "voice": "smooth male R&B voice, rich and velvety, soulful falsetto, neo soul modern delivery"},
+    {"genre": "Bossa nova",              "mood": "cafe afternoon",               "bpm": 130, "lang": "portugues",    "artist": "Nevoa",         "album_series": "Cafe do Sol",        "type": "pop",           "voice": "soft female Brazilian voice, breathy and intimate, bossa nova whisper tone, warm and flowing"},
+    {"genre": "Indie pop 2020s",         "mood": "melancholic hopeful",          "bpm": 100, "lang": "english",      "artist": "Pale June",     "album_series": "Silver Lining",      "type": "pop",           "voice": "delicate female indie voice, breathy and introspective, bedroom pop tone, slightly vulnerable"},
+    {"genre": "Jazz flamenco fusion",    "mood": "sophisticated duende",         "bpm": 80,  "lang": "espanol",      "artist": "Lena",          "album_series": "Alma Flamenca",      "type": "flamenco_jazz", "voice": "expressive male flamenco voice, deep and raw, Antonio Carmona style, jazz-influenced, soulful and complex"},
+    {"genre": "Hip-hop boom bap",        "mood": "raw authentic",                "bpm": 90,  "lang": "english",      "artist": "Fenn",          "album_series": "Street Scriptures",  "type": "pop",           "voice": "deep male rap voice, measured and deliberate, boom bap flow, raw and authentic delivery"},
+    {"genre": "Pop espanol boyband",     "mood": "feel good pop",                "bpm": 110, "lang": "espanol",      "artist": "Latitud",       "album_series": "Horizonte",          "type": "pop",           "voice": "multiple young male voices, harmonized boyband style, clean and energetic, Spanish pop delivery"},
+    {"genre": "Cantautor espanol",       "mood": "poetic introspective",         "bpm": 75,  "lang": "espanol",      "artist": "Tomas Via",     "album_series": "Cuadernos de Viaje", "type": "cantautor",     "voice": "soft intimate male voice, acoustic folk singer-songwriter, slightly raspy, Spanish accent, whispered intensity"},
+    {"genre": "Balada romantica latina", "mood": "romantic orchestral",          "bpm": 70,  "lang": "espanol",      "artist": "Alvaro Ciel",   "album_series": "Corazon Eterno",     "type": "luis_miguel",   "voice": "powerful male tenor, smooth and controlled vibrato, romantic Latin baritone, classic bolero delivery, passionate"},
+    {"genre": "Balada internacional",    "mood": "romantic multilingual",        "bpm": 68,  "lang": "multilingual", "artist": "Eduardo Laine", "album_series": "Sin Fronteras",      "type": "julio_iglesias","voice": "mature male baritone, warm and intimate, slightly raspy, romantic European crooner, charming and elegant"},
+    {"genre": "80s pop dance",           "mood": "euphoric dancefloor",          "bpm": 120, "lang": "english",      "artist": "Dayne Cross",   "album_series": "Neon Nights",        "type": "george_michael","voice": "smooth charismatic male voice, silky and powerful, George Michael style, soulful pop with edge, confident and seductive"},
 ]
 
 ALBUM_TRACKS = {
-    "Mork_Ripley": {
-        "tracks": 9,
-        "single_track": 3,
-        "subgenres": ["cinematic jazz noir", "melancholic jazz ballad", "sophisticated jazz groove", "moody jazz instrumental", "italian noir jazz", "slow jazz cinema", "jazz nocturne", "cinematic jazz waltz", "bittersweet jazz finale"]
-    },
-    "Mork_Weightless": {
-        "tracks": 9,
-        "single_track": 3,
-        "subgenres": ["deep ambient meditation", "ambient sleep drone", "atmospheric ambient pad", "calm ambient texture", "ambient chill wave", "slow ambient drift", "ambient breath", "floating ambient space", "peaceful ambient close"]
-    },
-    "Mork_Blue": {
-        "tracks": 9,
-        "single_track": 2,
-        "subgenres": ["late night jazz cool", "smooth jazz groove", "jazz trio improvisation", "mellow jazz piano", "cool jazz swing", "jazz after midnight", "soft jazz saxophone", "jazz brush drums", "blue jazz finale"]
+    "Mork": {
+        "tracks": 12,
+        "single_track": 5,
+        "subgenres": [
+            "cinematic jazz noir opener",
+            "melancholic jazz ballad",
+            "sophisticated jazz groove",
+            "deep ambient meditation",
+            "ambient chill wave",
+            "late night jazz cool",
+            "smooth jazz groove",
+            "atmospheric ambient pad",
+            "italian noir jazz",
+            "slow ambient drift",
+            "jazz nocturne",
+            "bittersweet cinematic finale"
+        ]
     },
     "Loxe": {
         "tracks": 11,
@@ -209,10 +210,7 @@ def generate_song_concept(style):
 
     if is_instrumental:
         lyrics_instruction = "'[INSTRUMENTAL]'"
-        if style["genre"] == "Cinematic jazz":
-            lyrics_detail = "No lyrics. Cinematic jazz instrumental inspired by The Talented Mr. Ripley soundtrack, Chet Baker, Miles Davis Kind of Blue era."
-        else:
-            lyrics_detail = "No lyrics needed - instrumental only."
+        lyrics_detail = "No lyrics needed - instrumental only."
     elif song_type == "cantautor":
         lyrics_instruction = "'full lyrics in the style of Jorge Drexler or Leonard Cohen: poetic, metaphorical, complex imagery, unexpected rhymes, narrative storytelling, 3 verses + 2 choruses + bridge'"
         lyrics_detail = ("Write deep, poetic lyrics. NEVER use words like caricias, sencillo, corazon, "
@@ -241,8 +239,8 @@ def generate_song_concept(style):
         lyrics_instruction = "'full lyrics: catchy but meaningful, 3 verses + 2 choruses + bridge'"
         lyrics_detail = "Write engaging lyrics. Theme: " + theme
 
-    if style["genre"] == "Cinematic jazz":
-        suno_prompt_instruction = '"cinematic jazz instrumental, Chet Baker trumpet, upright bass, brushed drums, melancholic Italian Riviera atmosphere, 1950s noir jazz, slow and sophisticated"'
+    if style["genre"] == "Cinematic jazz ambient":
+        suno_prompt_instruction = '"cinematic jazz ambient instrumental, Chet Baker trumpet, upright bass, brushed drums, atmospheric pads, melancholic nocturnal mood, slow and sophisticated"'
     elif song_type == "flamenco_jazz":
         suno_prompt_instruction = '"jazz flamenco fusion, acoustic guitar, jazz piano, cajon, Antonio Carmona style, duende, soulful, Spanish vocals, 80 BPM"'
     else:
@@ -287,10 +285,9 @@ def generate_album_track(subgenre, artist_key, style, track_num, total_tracks, t
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
     theme = random.choice(THEMES)
     song_type = style.get("type", "pop")
-    is_instrumental = style["lang"] == "instrumental"
     existing = ", ".join(track_titles) if track_titles else "none yet"
 
-    if is_instrumental:
+    if style["lang"] == "instrumental":
         lyrics_instruction = "'[INSTRUMENTAL]'"
         lyrics_detail = "No lyrics needed - instrumental only."
     elif song_type == "cantautor":
@@ -489,24 +486,22 @@ def run_daily_rotation():
     daily_summary = []
 
     artist_style_map = {
-        "Mork_Ripley":    {**STYLES[0],  "album_series": "Ripley Sessions"},
-        "Mork_Weightless":{**STYLES[10], "album_series": "Weightless"},
-        "Mork_Blue":      {**STYLES[14], "album_series": "Blue Hours"},
-        "Loxe":           STYLES[1],
-        "Stone Harbor":   STYLES[2],
-        "Lievo":          STYLES[3],
-        "Eira":           STYLES[4],
-        "Vael":           STYLES[5],
-        "Sable":          STYLES[6],
-        "Nevoa":          STYLES[7],
-        "Pale June":      STYLES[8],
-        "Lena":           STYLES[9],
-        "Fenn":           STYLES[11],
-        "Latitud":        STYLES[12],
-        "Tomas Via":      STYLES[13],
-        "Alvaro Ciel":    STYLES[15],
-        "Eduardo Laine":  STYLES[16],
-        "Dayne Cross":    STYLES[17],
+        "Mork":          STYLES[0],
+        "Loxe":          STYLES[1],
+        "Stone Harbor":  STYLES[2],
+        "Lievo":         STYLES[3],
+        "Eira":          STYLES[4],
+        "Vael":          STYLES[5],
+        "Sable":         STYLES[6],
+        "Nevoa":         STYLES[7],
+        "Pale June":     STYLES[8],
+        "Lena":          STYLES[9],
+        "Fenn":          STYLES[10],
+        "Latitud":       STYLES[11],
+        "Tomas Via":     STYLES[12],
+        "Alvaro Ciel":   STYLES[13],
+        "Eduardo Laine": STYLES[14],
+        "Dayne Cross":   STYLES[15],
     }
 
     send_telegram("🎵 <b>Music Bot arrancando</b>\nGenerando canciones del dia...")
