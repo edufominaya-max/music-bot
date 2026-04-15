@@ -197,6 +197,20 @@ def save_progress(progress):
     with open(ALBUM_PROGRESS_FILE, "w") as f:
         json.dump(progress, f, indent=2)
 
+def load_all_used_titles():
+    titles = []
+    if os.path.exists("output"):
+        for f in Path("output").rglob("concept.json"):
+            try:
+                with open(f) as cf:
+                    cd = json.load(cf)
+                    t = cd.get("concept", {}).get("title", "")
+                    if t:
+                        titles.append(t)
+            except:
+                pass
+    return titles
+
 def pick_style():
     day = datetime.now().timetuple().tm_yday
     return STYLES[day % len(STYLES)]
@@ -281,11 +295,11 @@ def generate_song_concept(style):
     raw = raw.replace("```json", "").replace("```", "").strip()
     return json.loads(raw)
 
-def generate_album_track(subgenre, artist_key, style, track_num, total_tracks, track_titles, is_single=False):
+def generate_album_track(subgenre, artist_key, style, track_num, total_tracks, all_used_titles, is_single=False):
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
     theme = random.choice(THEMES)
     song_type = style.get("type", "pop")
-    existing = ", ".join(track_titles) if track_titles else "none yet"
+    existing = ", ".join(all_used_titles) if all_used_titles else "none yet"
 
     if style["lang"] == "instrumental":
         lyrics_instruction = "'[INSTRUMENTAL]'"
@@ -316,11 +330,11 @@ def generate_album_track(subgenre, artist_key, style, track_num, total_tracks, t
         "Language: " + style["lang"] + "\n"
         "Voice: " + style.get("voice", "") + "\n"
         "Theme: " + theme + "\n"
-        "Existing titles: " + existing + "\n\n"
+        "ALREADY USED TITLES GLOBALLY — do NOT use any of these: " + existing + "\n\n"
         + single_note +
         "Return ONLY valid JSON:\n"
         "{\n"
-        '  "title": "original title different from existing",\n'
+        '  "title": "completely original title — must be different from ALL titles above",\n'
         '  "artist": "' + style["artist"] + '",\n'
         '  "album": "' + style["album_series"] + '",\n'
         '  "track_number": ' + str(track_num) + ',\n'
@@ -485,6 +499,10 @@ def run_daily_rotation():
     generated_count = 0
     daily_summary = []
 
+    # Registro global de todos los titulos ya usados
+    all_used_titles = load_all_used_titles()
+    print("Titulos ya usados globalmente: " + str(len(all_used_titles)))
+
     artist_style_map = {
         "Mork":          STYLES[0],
         "Loxe":          STYLES[1],
@@ -522,19 +540,10 @@ def run_daily_rotation():
         print("\n=== " + artist_key + " Track " + str(track_num) + "/" + str(total_tracks) + (" SINGLE" if is_single else "") + " ===")
 
         try:
-            track_titles = []
-            album_folder = "output/" + artist_key.replace(" ", "_") + "_" + style["album_series"].replace(" ", "_")
-            if os.path.exists(album_folder):
-                for f in Path(album_folder).glob("*/concept.json"):
-                    with open(f) as cf:
-                        cd = json.load(cf)
-                        t = cd.get("concept", {}).get("title", "")
-                        if t:
-                            track_titles.append(t)
-
-            concept = generate_album_track(subgenre, artist_key, style, track_num, total_tracks, track_titles, is_single=is_single)
+            concept = generate_album_track(subgenre, artist_key, style, track_num, total_tracks, all_used_titles, is_single=is_single)
             print("Titulo: " + concept["title"])
 
+            album_folder = "output/" + artist_key.replace(" ", "_") + "_" + style["album_series"].replace(" ", "_")
             Path(album_folder).mkdir(parents=True, exist_ok=True)
             track_folder = album_folder + "/track_" + str(track_num).zfill(2) + "_" + concept["title"].replace(" ", "_")[:30]
             Path(track_folder).mkdir(parents=True, exist_ok=True)
@@ -564,6 +573,7 @@ def run_daily_rotation():
             progress[artist_key] = track_num
             save_progress(progress)
             generated_count += 1
+            all_used_titles.append(concept["title"])
 
             single_mark = " SINGLE" if is_single else ""
             daily_summary.append("ok " + style["artist"] + " " + concept["title"] + single_mark)
