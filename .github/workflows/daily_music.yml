@@ -17,8 +17,14 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install ffmpeg
+        run: sudo apt-get install -y ffmpeg
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Install YouTube dependencies
+        run: pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
       - name: Download progress artifact
         uses: dawidd6/action-download-artifact@v3
@@ -35,6 +41,19 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python music_bot.py rotation
+
+      - name: Upload to YouTube
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python upload_youtube.py
+
+      - name: Prepare social posts
+        run: python prepare_social.py
+
+      - name: Prepare Reddit posts
+        run: python post_reddit.py
 
       - name: Save progress
         uses: actions/upload-artifact@v4
