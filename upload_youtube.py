@@ -7,6 +7,7 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+import requests
 
 YOUTUBE_CLIENT_ID = os.environ["YOUTUBE_CLIENT_ID"]
 YOUTUBE_CLIENT_SECRET = os.environ["YOUTUBE_CLIENT_SECRET"]
@@ -38,10 +39,77 @@ def get_youtube_service():
         client_id=YOUTUBE_CLIENT_ID,
         client_secret=YOUTUBE_CLIENT_SECRET,
         token_uri="https://oauth2.googleapis.com/token",
-        scopes=["https://www.googleapis.com/auth/youtube.upload"]
+        scopes=[
+            "https://www.googleapis.com/auth/youtube.upload",
+            "https://www.googleapis.com/auth/youtube",
+            "https://www.googleapis.com/auth/youtube.force-ssl"
+        ]
     )
     creds.refresh(Request())
     return build("youtube", "v3", credentials=creds)
+
+def upload_channel_branding(artist):
+    profile_folder = "profiles/" + artist.replace(" ", "_")
+    logo_path = profile_folder + "/profile_logo.jpg"
+    banner_path = profile_folder + "/youtube_banner.jpg"
+    bio_path = profile_folder + "/bios.json"
+    done_file = profile_folder + "/youtube_branding_done.txt"
+
+    if os.path.exists(done_file):
+        print("Branding ya subido para " + artist)
+        return
+
+    if not os.path.exists(logo_path) and not os.path.exists(banner_path):
+        print("No hay perfil generado para " + artist)
+        return
+
+    print("\nSubiendo branding YouTube para " + artist + "...")
+
+    try:
+        youtube = get_youtube_service()
+
+        # Subir banner
+        if os.path.exists(banner_path):
+            try:
+                media = MediaFileUpload(banner_path, mimetype="image/jpeg")
+                youtube.channelBanners().insert(
+                    media_body=media
+                ).execute()
+                print("Banner subido para " + artist)
+            except Exception as e:
+                print("Error subiendo banner: " + str(e))
+
+        # Actualizar descripcion del canal
+        if os.path.exists(bio_path):
+            try:
+                with open(bio_path, encoding="utf-8") as f:
+                    bios = json.load(f)
+
+                youtube_desc = bios.get("youtube_description", "")
+                if youtube_desc:
+                    youtube.channels().update(
+                        part="brandingSettings",
+                        body={
+                            "id": YOUTUBE_CHANNELS[artist],
+                            "brandingSettings": {
+                                "channel": {
+                                    "description": youtube_desc,
+                                    "keywords": artist + " music official"
+                                }
+                            }
+                        }
+                    ).execute()
+                    print("Descripcion actualizada para " + artist)
+            except Exception as e:
+                print("Error actualizando descripcion: " + str(e))
+
+        with open(done_file, "w") as f:
+            f.write("done")
+
+        print("Branding completo para " + artist)
+
+    except Exception as e:
+        print("Error general branding " + artist + ": " + str(e))
 
 def create_video_file(mp3_path, cover_path, output_path):
     if os.path.exists(output_path):
@@ -133,6 +201,14 @@ def upload_track_to_youtube(track_folder, artist, title, album, description, tag
 def upload_all_new_tracks():
     uploaded = 0
 
+    # Primero subir branding de todos los artistas
+    print("=== SUBIENDO BRANDING DE CANALES ===")
+    for artist in YOUTUBE_CHANNELS.keys():
+        upload_channel_branding(artist)
+        time.sleep(3)
+
+    # Luego subir canciones nuevas
+    print("\n=== SUBIENDO CANCIONES NUEVAS ===")
     for metadata_file in Path("output").rglob("distrokid_metadata.json"):
         folder = str(metadata_file.parent)
 
