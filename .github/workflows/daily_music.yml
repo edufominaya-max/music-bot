@@ -33,6 +33,11 @@ jobs:
           path: .
         continue-on-error: true
 
+      - name: Generate artist profiles
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python generate_profiles.py
+
       - name: Run music bot
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -69,3 +74,10 @@ jobs:
           name: daily-music-${{ github.run_id }}
           path: output/
           retention-days: 30
+
+      - name: Upload profiles
+        uses: actions/upload-artifact@v4
+        with:
+          name: artist-profiles
+          path: profiles/
+          retention-days: 90
