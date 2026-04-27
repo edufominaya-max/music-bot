@@ -48,6 +48,9 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python music_bot.py rotation
 
+      - name: Create lyric videos
+        run: python create_lyric_video.py
+
       - name: Upload to YouTube
         env:
           YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
