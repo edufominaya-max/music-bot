@@ -27,9 +27,12 @@ YOUTUBE_CHANNELS = {
     "Fenn":          "UCdmflE3itG8fg0oluaT_ZVQ",
     "Latitud":       "UC1J0I_eYePnzNFvo1hIFz-w",
     "Tomas Via":     "UC0Gy1CoJQK7MEUDGpQ2w5qw",
-    "Alvaro Ciel":   "UCr4ESsT7Ih_9-YhlsLkh5NA",
+    "Marcos Vera":   "UCr4ESsT7Ih_9-YhlsLkh5NA",
     "Eduardo Laine": "UCrheHyZT0meCatjYhsUGfmQ",
-    "Dayne Cross":   "UCv_QrO5P_Hfzf9ORFA828MQ",
+    "KOLT":          "UCv_QrO5P_Hfzf9ORFA828MQ",
+    "Mateo Solis":   "UCSDArbs48rvlqJSI7uJuNnA",
+    "Ravi Anand":    "UCKh4loCPPfjpx3wfJxgsI-w",
+    "Yue Chen":      "UCf4IBJD8o9uyFrf1j9fit7g",
 }
 
 def get_youtube_service():
@@ -68,23 +71,18 @@ def upload_channel_branding(artist):
     try:
         youtube = get_youtube_service()
 
-        # Subir banner
         if os.path.exists(banner_path):
             try:
                 media = MediaFileUpload(banner_path, mimetype="image/jpeg")
-                youtube.channelBanners().insert(
-                    media_body=media
-                ).execute()
+                youtube.channelBanners().insert(media_body=media).execute()
                 print("Banner subido para " + artist)
             except Exception as e:
                 print("Error subiendo banner: " + str(e))
 
-        # Actualizar descripcion del canal
         if os.path.exists(bio_path):
             try:
                 with open(bio_path, encoding="utf-8") as f:
                     bios = json.load(f)
-
                 youtube_desc = bios.get("youtube_description", "")
                 if youtube_desc:
                     youtube.channels().update(
@@ -105,7 +103,6 @@ def upload_channel_branding(artist):
 
         with open(done_file, "w") as f:
             f.write("done")
-
         print("Branding completo para " + artist)
 
     except Exception as e:
@@ -201,13 +198,11 @@ def upload_track_to_youtube(track_folder, artist, title, album, description, tag
 def upload_all_new_tracks():
     uploaded = 0
 
-    # Primero subir branding de todos los artistas
     print("=== SUBIENDO BRANDING DE CANALES ===")
     for artist in YOUTUBE_CHANNELS.keys():
         upload_channel_branding(artist)
         time.sleep(3)
 
-    # Luego subir canciones nuevas
     print("\n=== SUBIENDO CANCIONES NUEVAS ===")
     for metadata_file in Path("output").rglob("distrokid_metadata.json"):
         folder = str(metadata_file.parent)
