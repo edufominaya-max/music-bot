@@ -1,13 +1,10 @@
 name: Generate Day 1
-
 on:
   workflow_dispatch:
-
 jobs:
   generate:
     runs-on: ubuntu-latest
     timeout-minutes: 350
-
     steps:
       - uses: actions/checkout@v4
 
@@ -16,8 +13,21 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install ffmpeg
+        run: sudo apt-get install -y ffmpeg
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Install YouTube dependencies
+        run: pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
+
+      - name: Download progress artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: album-progress
+          path: .
+        continue-on-error: true
 
       - name: Run Day 1
         env:
@@ -27,6 +37,31 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python music_bot.py day1
+
+      - name: Create lyric videos
+        run: python create_lyric_video.py
+
+      - name: Upload to YouTube
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python upload_youtube.py
+
+      - name: Post to Instagram
+        env:
+          INSTAGRAM_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python post_instagram.py
+
+      - name: Save progress
+        uses: actions/upload-artifact@v4
+        with:
+          name: album-progress
+          path: album_progress.json
+          retention-days: 90
+          overwrite: true
 
       - name: Upload output
         uses: actions/upload-artifact@v4
