@@ -108,11 +108,12 @@ def upload_channel_branding(artist):
     except Exception as e:
         print("Error general branding " + artist + ": " + str(e))
 
-def create_video_file(mp3_path, cover_path, output_path):
+def create_static_video(mp3_path, cover_path, output_path):
+    """Fallback: video estático simple con cover + audio"""
     if os.path.exists(output_path):
         return True
     if not os.path.exists(cover_path):
-        print("No hay cover.jpg")
+        print("No hay cover.jpg para video estatico")
         return False
     cmd = [
         "ffmpeg", "-loop", "1",
@@ -129,10 +130,37 @@ def create_video_file(mp3_path, cover_path, output_path):
     result = subprocess.run(cmd, capture_output=True)
     return result.returncode == 0
 
-def upload_track_to_youtube(track_folder, artist, title, album, description, tags, lyrics):
+def get_video_to_upload(track_folder):
+    """
+    Devuelve la ruta del video a subir, con esta prioridad:
+    1. lyric_video.mp4 (generado por create_lyric_video.py) — preferido
+    2. video.mp4 estático — fallback si no hay lyric video
+    Crea el video estático si no existe ninguno.
+    """
+    lyric_video = track_folder + "/lyric_video.mp4"
+    static_video = track_folder + "/video.mp4"
     mp3_path = track_folder + "/track.mp3"
     cover_path = track_folder + "/cover.jpg"
-    video_path = track_folder + "/video.mp4"
+
+    # Prioridad 1: lyric video
+    if os.path.exists(lyric_video):
+        print("Usando lyric video: " + lyric_video)
+        return lyric_video
+
+    # Prioridad 2: video estático ya existente
+    if os.path.exists(static_video):
+        print("Usando video estatico existente: " + static_video)
+        return static_video
+
+    # Fallback: crear video estático
+    print("No hay lyric video, creando video estatico...")
+    if create_static_video(mp3_path, cover_path, static_video):
+        return static_video
+
+    return None
+
+def upload_track_to_youtube(track_folder, artist, title, album, description, tags, lyrics):
+    mp3_path = track_folder + "/track.mp3"
 
     if not os.path.exists(mp3_path):
         print("No hay MP3 en " + track_folder)
@@ -143,9 +171,9 @@ def upload_track_to_youtube(track_folder, artist, title, album, description, tag
         print("Canal YouTube no configurado para " + artist)
         return None
 
-    print("Creando video estatico...")
-    if not create_video_file(mp3_path, cover_path, video_path):
-        print("Error creando video")
+    video_path = get_video_to_upload(track_folder)
+    if not video_path:
+        print("No se pudo obtener video para " + track_folder)
         return None
 
     youtube = get_youtube_service()
@@ -157,9 +185,9 @@ def upload_track_to_youtube(track_folder, artist, title, album, description, tag
 
     body = {
         "snippet": {
-            "title": artist + " - " + title + " (Official Audio)",
+            "title": artist + " - " + title + " (Official Lyric Video)",
             "description": full_description,
-            "tags": tags + [artist, album, "official audio", "new music"],
+            "tags": tags + [artist, album, "official lyric video", "new music"],
             "categoryId": "10",
         },
         "status": {
