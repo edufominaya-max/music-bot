@@ -1,0 +1,55 @@
+{
+  "_comentario": "Las 3 primeras son las puntas de lanza (se publican primero). Las otras 11 dan profundidad al calendario. Para cada una: pon el titulo EXACTO, el nombre de los ficheros en assets/, y el tramo clip_start/clip_end (5-90s) del momento mas fuerte del tema. El .lrc se autogenera desde el .txt por forced alignment.",
+
+  "songs": [
+    {
+      "title": "Contigo hasta los huesos",
+      "artist": "Latitud",
+      "audio": "assets/contigo_hasta_los_huesos.mp3",
+      "cover": "assets/horizonte_cover.jpg",
+      "lrc": "assets/contigo_hasta_los_huesos.lrc",
+      "lyrics_txt": "assets/contigo_hasta_los_huesos.txt",
+      "clip_start": 34.8,
+      "clip_end": 64.0,
+      "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8",
+      "caption": "«Contigo hasta los huesos» — sobre quedarse cuando es fácil irse.\n\nEstá en Horizonte 🎧 Guárdala en Spotify si te llega.\n#indie #indiepop #musicaindependiente #Latitud #Horizonte"
+    },
+    {
+      "title": "Idioma extraño",
+      "artist": "Latitud",
+      "audio": "assets/idioma_extrano.mp3",
+      "cover": "assets/horizonte_cover.jpg",
+      "lrc": "assets/idioma_extrano.lrc",
+      "lyrics_txt": "assets/idioma_extrano.txt",
+      "clip_start": 0.0,
+      "clip_end": 30.0,
+      "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8",
+      "caption": "«Idioma extraño» — cuando las palabras no alcanzan.\n\nEn Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #musicaindependiente #Latitud #Horizonte"
+    },
+    {
+      "title": "La llave que no uso",
+      "artist": "Latitud",
+      "audio": "assets/la_llave_que_no_uso.mp3",
+      "cover": "assets/horizonte_cover.jpg",
+      "lrc": "assets/la_llave_que_no_uso.lrc",
+      "lyrics_txt": "assets/la_llave_que_no_uso.txt",
+      "clip_start": 0.0,
+      "clip_end": 30.0,
+      "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8",
+      "caption": "«La llave que no uso» — lo que guardamos por si acaso.\n\nEn Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #musicaindependiente #Latitud #Horizonte"
+    },
+
+    { "title": "El ruido que no haces", "artist": "Latitud", "audio": "assets/el_ruido_que_no_haces.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/el_ruido_que_no_haces.lrc", "lyrics_txt": "assets/el_ruido_que_no_haces.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«El ruido que no haces» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "El último baile", "artist": "Latitud", "audio": "assets/el_ultimo_baile.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/el_ultimo_baile.lrc", "lyrics_txt": "assets/el_ultimo_baile.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«El último baile» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+
+    { "title": "TEMA 6 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_06.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_06.lrc", "lyrics_txt": "assets/tema_06.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 6» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "TEMA 7 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_07.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_07.lrc", "lyrics_txt": "assets/tema_07.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 7» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "TEMA 8 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_08.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_08.lrc", "lyrics_txt": "assets/tema_08.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 8» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "TEMA 9 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_09.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_09.lrc", "lyrics_txt": "assets/tema_09.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 9» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "TEMA 10 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_10.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_10.lrc", "lyrics_txt": "assets/tema_10.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 10» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "TEMA 11 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_11.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_11.lrc", "lyrics_txt": "assets/tema_11.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 11» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "TEMA 12 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_12.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_12.lrc", "lyrics_txt": "assets/tema_12.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 12» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "TEMA 13 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_13.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_13.lrc", "lyrics_txt": "assets/tema_13.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 13» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" },
+    { "title": "TEMA 14 — pon el titulo exacto", "artist": "Latitud", "audio": "assets/tema_14.mp3", "cover": "assets/horizonte_cover.jpg", "lrc": "assets/tema_14.lrc", "lyrics_txt": "assets/tema_14.txt", "clip_start": 0.0, "clip_end": 30.0, "spotify_url": "https://open.spotify.com/artist/7429SDJPJTMt2mLFwYk7h8", "caption": "«TEMA 14» — en Horizonte 🎧 Guárdala si te llega.\n#indie #indiepop #Latitud #Horizonte" }
+  ]
+}
