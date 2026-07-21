@@ -1,0 +1,68 @@
+name: Generate Latitud World Cup Candidates
+
+on:
+  workflow_dispatch:
+    inputs:
+      num_variants:
+        description: "Number of candidate songs to generate"
+        required: false
+        default: "3"
+
+jobs:
+  generate_latitud_worldcup_candidates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate Latitud World Cup candidates
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
+          APIPASS_KEY: ${{ secrets.APIPASS_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NUM_VARIANTS: ${{ github.event.inputs.num_variants }}
+        run: python generate_latitud_worldcup_candidates.py
+
+      - name: Prepare artifact package
+        if: always()
+        run: |
+          mkdir -p artifact_package
+          if [ -d output/Latitud_Horizonte ]; then
+            cp -r output/Latitud_Horizonte artifact_package/Latitud_Horizonte
+          fi
+          if [ -d output/Latitud_Mundial_2026 ]; then
+            cp -r output/Latitud_Mundial_2026 artifact_package/Latitud_Mundial_2026
+          fi
+          find artifact_package -maxdepth 4 -type f | sort || true
+
+      - name: Upload generated songs artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latitud-worldcup-generated-output
+          path: artifact_package/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Commit generated output back to repo
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add output/ || true
+          git commit -m "Generate Latitud World Cup candidates" || echo "No changes to commit"
+          git push || true
